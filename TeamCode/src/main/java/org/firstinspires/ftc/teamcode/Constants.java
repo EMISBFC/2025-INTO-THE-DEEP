@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode;
-public class Constants {
-    public static double wristFloorPos = 0.65, wristBackboardPos = 0.3;
-    public static double leftGripperOpen = 0.93, leftGripperClose = 0.75;
-    public static double rightGripperOpen = 0.33, rightGripperClose = 0.52;
-    public static int initialArmPos = 2400, armPosFloor = 2350, armPosHang = 150, armPosBackdrop = -800;
-    public static double ticks_in_degrees = (double) 360/(28*230*4*231);
-    public static double p = 0.005, i = 0, d= 0.001, f = 0.225;
-    public static int camW = 640, camH = 480;
 
-    public static int MinZone3 = 60;
+public class Constants {
+    public static final double GRIPPER_OPEN_POSITION = 0.9; // Adjust based on your hardware setup
+    public static final double GRIPPER_CLOSE_POSITION = 0.51; // Adjust based on your hardware setup
+    public static final int GRIPPER_PAUSE = 300; //IN MILLISECONDS
+
+    public static final int TIME_TO_FACE_DOWN = 1250;
+    public static final int TIME_TO_TRANSITION = 900;
 }
