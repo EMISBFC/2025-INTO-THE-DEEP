@@ -1,4 +1,5 @@
 package org.firstinspires.ftc.teamcode;
+
 public class Constants {
     public static double armP = 2.5, armI = 0.75, armD= 0.5, armF = 0.225;
     public static final double LOGRIPPER_OPEN_POS = 0.9;
