@@ -8,8 +8,8 @@ public class GripperSpinner {
     private Servo LRot;
     private Servo RRot;
     public GripperSpinner(HardwareMap hardwareMap){
-        LRot = hardwareMap.servo.get("InRotL");
-        RRot = hardwareMap.servo.get("InRotR");
+        LRot = hardwareMap.servo.get("loRotL");
+        RRot = hardwareMap.servo.get("loRotR");
     }
 
     public void handleSpinner(Gamepad gamepad) {

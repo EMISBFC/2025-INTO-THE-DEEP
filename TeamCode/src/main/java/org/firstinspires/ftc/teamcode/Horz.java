@@ -17,15 +17,8 @@ import com.qualcomm.robotcore.util.Range;
 public class Horz{
     //private Motor horz;
     public DcMotor horz;
-
-
     private final double MAX_SPEED = 1.0;
     private final int MAX_EXTENSION_POSITION = 840;
-
-    public void loop(){
-        telemetry.addData("Encoder Position", horz.getCurrentPosition());
-        telemetry.update();
-    }
     public Horz(HardwareMap hardwareMap){
 
         //horz = new Motor(hardwareMap, "horz");
@@ -33,22 +26,6 @@ public class Horz{
         horz.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
     public void handleHorz(Gamepad gamepad) {
-        /*double rightTrigger = gamepad.right_trigger;  // Right trigger for forward
-        double leftTrigger = gamepad.left_trigger;
-
-        if(leftTrigger>0.3){
-            horz.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-            horz.motor.setPower(0.65);
-        }
-
-        if(gamepad.right_trigger>0.3){
-            horz.motor.setDirection(DcMotorSimple.Direction.FORWARD);
-            horz.motor.setPower(0.65);
-        }
-        else if (gamepad.left_trigger<0.3 && gamepad.right_trigger<0.3){
-            horz.motor.setPower(0);
-        }
-    }*/
         double leftTrigger = gamepad.left_trigger;
         double rightTrigger = gamepad.right_trigger;
 
@@ -64,7 +41,5 @@ public class Horz{
         } else {
             horz.setPower(0);
         }
-
-
     }
 }

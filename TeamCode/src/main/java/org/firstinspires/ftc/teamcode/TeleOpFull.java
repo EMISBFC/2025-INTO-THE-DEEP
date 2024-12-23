@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -10,20 +8,15 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU.Parameters;
-import com.qualcomm.hardware.bosch.BNO055IMU;
 
 @Config
 @TeleOp(name="Teleop FULL")
 public class TeleOpFull  extends OpMode {
     private RevIMU imu;
-
     private Chassis chassis;
-    private PIDController controller;
-    private Gripper gripper;
+//    private PIDController controller;
+    private lowGripper low_gripper;
+    private highGripper high_gripper;
     private GripperSpinner gripperSpinner;
     private Horz horz;
     private Arm arm;
@@ -40,13 +33,13 @@ public class TeleOpFull  extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
-        gripper = new Gripper(hardwareMap);
+        low_gripper = new lowGripper(hardwareMap);
+        high_gripper = new highGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap);
         arm = new Arm(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
-
     }
 
     @Override
@@ -57,13 +50,17 @@ public class TeleOpFull  extends OpMode {
         double acc = gamepad1.right_trigger;
         double heading = imu.getRotation2d().getDegrees();
 
-        telemetry.addData("Encoder Position", horz.horz.getCurrentPosition());
-        telemetry.update();
+
         chassis.fieldCentricDrive(x, y, rx, heading, acc);
-        gripper.handleServo(gamepad2);
+        low_gripper.handleServo(gamepad2);
+        high_gripper.handleServo(gamepad2);
         gripperSpinner.handleSpinner(gamepad2);
         telemetry.update();
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
+        telemetry.addData("arm pos", arm.currentPos);
+        telemetry.addData("arm target", arm.target);
+        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+        telemetry.update();
     }
 }
