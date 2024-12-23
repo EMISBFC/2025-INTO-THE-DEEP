@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class GripperTest extends LinearOpMode {
 
     private Servo gripperServo; // Declare the servo
-    private final double open = Constants.GRIPPER_OPEN_POSITION; // Adjust based on your hardware setup
-    private final double close = Constants.GRIPPER_CLOSE_POSITION ; // Adjust based on your hardware setup
+    private final double open = Constants.INTAKE_OPEN_POS; // Adjust based on your hardware setup
+    private final double close = Constants.INTAKE_CLOSE_POS ; // Adjust based on your hardware setup
 
     @Override
     public void runOpMode() {

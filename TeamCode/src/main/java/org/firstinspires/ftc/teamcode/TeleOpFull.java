@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU.Parameters;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 
@@ -22,9 +23,10 @@ public class TeleOpFull  extends OpMode {
 
     private Chassis chassis;
     private PIDController controller;
-    private GripperLearn gripper;
+    private Gripper gripper;
     private GripperSpinner gripperSpinner;
     private Horz horz;
+    private Arm arm;
 
     public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
             RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
@@ -38,14 +40,14 @@ public class TeleOpFull  extends OpMode {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
-        gripper = new GripperLearn(hardwareMap);
+        gripper = new Gripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap);
+        arm = new Arm(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
 
     }
-
 
     @Override
     public void loop() {
@@ -62,5 +64,6 @@ public class TeleOpFull  extends OpMode {
         gripperSpinner.handleSpinner(gamepad2);
         telemetry.update();
         horz.handleHorz(gamepad2);
+        arm.handleArm(gamepad2);
     }
 }

@@ -20,7 +20,7 @@ public class GripperLearn {
         if(gamepad.cross && !openFK){
             openFK = true;
 
-            fkthis.setPosition(Constants.GRIPPER_OPEN_POSITION);
+            fkthis.setPosition(Constants.INTAKE_OPEN_POS);
             long startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 300) {
                 //do nothing
@@ -28,7 +28,7 @@ public class GripperLearn {
         } else if (gamepad.cross && openFK) {
             openFK = false;
 
-            fkthis.setPosition(Constants.GRIPPER_CLOSE_POSITION);
+            fkthis.setPosition(Constants.INTAKE_CLOSE_POS);
             long startTime = System.currentTimeMillis();
             while (System.currentTimeMillis() - startTime < 300) {
                 //do nothing

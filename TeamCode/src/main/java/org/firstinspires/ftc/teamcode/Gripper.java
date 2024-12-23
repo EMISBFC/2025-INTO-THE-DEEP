@@ -6,40 +6,45 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Gripper {
 
-    private Servo gripperServo; // Declare the servo
-    private final double openPosition = Constants.GRIPPER_OPEN_POSITION; // Adjust based on your hardware setup
-    private final double closePosition = Constants.GRIPPER_CLOSE_POSITION ; // Adjust based on your hardware setup
-    private final double pause = Constants.GRIPPER_PAUSE;
-    private boolean open = false;
-    public Gripper(HardwareMap hardwareMap){
-        gripperServo = hardwareMap.servo.get("gripper");
+    private Servo gripper;
+    boolean crossLock = false;
+    boolean isOpen = false;
+    public Gripper(HardwareMap hardwareMap) {
+        gripper = hardwareMap.servo.get("inServo");
     }
-    public void handleServo(Gamepad gamepad) {
 
-        if (gamepad.cross && open == false) {
-            open = true;
-            gripperServo.setPosition(openPosition);
-            long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < pause) {
-                //do nothing. YES I KNOW QUALITY CODE
-            }
-        } else if (gamepad.cross && open == true) {
-            open = false;
-            gripperServo.setPosition(closePosition);
-            long startTime = System.currentTimeMillis();
-            while (System.currentTimeMillis() - startTime < pause) {
-                //do nothing. YES I KNOW QUALITY CODE
-            }
+    public void handleServo(Gamepad gamepad){
+
+        if(gamepad.cross && !crossLock && isOpen){ // end me , ty u/4106Thumbs
+//            gripper.setDirection(Servo.Direction.REVERSE);
+            gripper.setPosition(Constants.INTAKE_CLOSE_POS);
+            crossLock = true;
+            isOpen = false;
         }
-    }
+        else if(gamepad.cross && !crossLock && !isOpen){
+//            gripper.setDirection(Servo.Direction.REVERSE);
+            gripper.setPosition(Constants.INTAKE_OPEN_POS);
+            crossLock = true;
+            isOpen = true;
+        }
+        else if(!gamepad.cross && crossLock) crossLock = false;
 
-    public void setOpenPosition() {
-        open = true;
-        gripperServo.setPosition(openPosition);
-    }
+ /*       if(gamepad.cross && !openFK){
+            openFK = true;
 
-    public void setClosePositionGripper() {
-        open = false;
-        gripperServo.setPosition(closePosition);
+            fkthis.setPosition(Constants.GRIPPER_OPEN_POSITION);
+            long startTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() - startTime < 300) {
+                //do nothing
+            }
+        } else if (gamepad.cross && openFK) {
+            openFK = false;
+
+            fkthis.setPosition(Constants.GRIPPER_CLOSE_POSITION);
+            long startTime = System.currentTimeMillis();
+            while (System.currentTimeMillis() - startTime < 300) {
+                //do nothing
+            } */
     }
 }
+
