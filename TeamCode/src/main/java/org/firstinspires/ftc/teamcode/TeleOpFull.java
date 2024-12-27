@@ -58,14 +58,13 @@ public class TeleOpFull  extends OpMode {
         low_gripper.handleServo(gamepad2);
         high_gripper.handleServo(gamepad2);
         gripperSpinner.handleSpinner(gamepad2);
-        telemetry.update();
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
-
+ //       telemetry.update();
 
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("arm target", arm.targetArm);
-        telemetry.addData("motor power", arm.power);
+        telemetry.addData("arm power", arm.power);
         telemetry.update();
 
 //        telemetry.addData("horz pos", horz.horz.getCurrentPosition());

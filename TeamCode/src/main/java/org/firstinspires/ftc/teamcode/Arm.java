@@ -26,11 +26,10 @@ public class Arm {
     public Arm(HardwareMap hardwareMap){
         arm = hardwareMap.get(DcMotor.class, "arm");
         controller = new PIDController(Constants.armP, Constants.armI, Constants.armD);
-        targetArm = Constants.initialArmPos;
+        targetArm = Constants.ARM_INIT;
 
 //        int currentPos = arm.getCurrentPosition();
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-
     }
     public void handleArm(Gamepad gamepad) {
 
