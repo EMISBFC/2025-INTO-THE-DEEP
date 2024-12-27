@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -21,6 +23,7 @@ public class TeleOpFull  extends OpMode {
     private Horz horz;
     private Arm arm;
 
+
     public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
             RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
     public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
@@ -36,7 +39,7 @@ public class TeleOpFull  extends OpMode {
         low_gripper = new lowGripper(hardwareMap);
         high_gripper = new highGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
-        horz = new Horz(hardwareMap);
+        horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
@@ -58,9 +61,14 @@ public class TeleOpFull  extends OpMode {
         telemetry.update();
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
+
+
         telemetry.addData("arm pos", arm.currentPos);
-        telemetry.addData("arm target", arm.target);
-        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+        telemetry.addData("arm target", arm.targetArm);
+        telemetry.addData("motor power", arm.power);
         telemetry.update();
+
+//        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+//        telemetry.update();
     }
 }
