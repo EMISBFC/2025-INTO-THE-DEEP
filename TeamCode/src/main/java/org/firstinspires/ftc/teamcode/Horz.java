@@ -19,12 +19,13 @@ public class Horz{
     public DcMotor horz;
     TouchSensor limit_switch;
     private final double MAX_SPEED = 1.0;
-    private final int MAX_EXTENSION_POSITION = 840;
+//    private final int MAX_EXTENSION_POSITION = 840;
     public int zero_position = 0;
     public Horz(HardwareMap hardwareMap){
 
         //horz = new Motor(hardwareMap, "horz");
         horz = hardwareMap.get(DcMotor.class, "horz");
+        horz.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horz.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         limit_switch = hardwareMap.get(TouchSensor.class, "limit_switch");
     }
@@ -41,7 +42,7 @@ public class Horz{
 
         int currentPos = horz.getCurrentPosition();
 
-        if (motorPower > 0 && currentPos < MAX_EXTENSION_POSITION) { //  && currentPos >= zero_position
+        if (motorPower > 0 && currentPos < Constants.MAX_HORZ_POS) { //  && currentPos >= zero_position
             horz.setPower(motorPower);
         } else if (motorPower < 0) {
             horz.setPower(motorPower);

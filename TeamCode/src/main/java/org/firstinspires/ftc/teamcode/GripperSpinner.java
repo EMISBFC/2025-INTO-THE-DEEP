@@ -10,6 +10,10 @@ public class GripperSpinner {
     public GripperSpinner(HardwareMap hardwareMap){
         LRot = hardwareMap.servo.get("loRotL");
         RRot = hardwareMap.servo.get("loRotR");
+        LRot.setDirection(Servo.Direction.REVERSE);
+        LRot.setPosition(Constants.InRotPosDown);
+        RRot.setDirection(Servo.Direction.FORWARD);
+        RRot.setPosition(Constants.InRotPosDown);
     }
 
     public void handleSpinner(Gamepad gamepad) {

@@ -10,6 +10,8 @@ public class highGripper {
     boolean isOpen = false;
     public highGripper(HardwareMap hardwareMap) {
         high_gripper = hardwareMap.servo.get("hiServo");
+        high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+        isOpen = false;
     }
 
     public void handleServo(Gamepad gamepad){

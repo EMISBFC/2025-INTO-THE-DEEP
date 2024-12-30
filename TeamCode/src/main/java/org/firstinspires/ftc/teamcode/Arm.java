@@ -50,9 +50,9 @@ public class Arm {
                 if(targetArm>Constants.ARM_OUT)targetArm--;
                 else targetArm++;
             }
-            HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+//            HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
 //            HighGripper.padLock = true;
-            HighGripper.isOpen = true;
+//            HighGripper.isOpen = true;
 //            arm.setTargetPosition(Constants.ARM_SIDE);
 //            target = Constants.ARM_SIDE;
         }

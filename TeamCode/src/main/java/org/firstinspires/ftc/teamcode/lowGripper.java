@@ -10,6 +10,8 @@ public class lowGripper {
     boolean isOpen = false;
     public lowGripper(HardwareMap hardwareMap) {
         low_gripper = hardwareMap.servo.get("loServo");
+        low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
+        isOpen = true;
     }
 
     public void handleServo(Gamepad gamepad){

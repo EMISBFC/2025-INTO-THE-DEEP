@@ -63,6 +63,7 @@ public class TeleOpFull  extends OpMode {
  //       telemetry.update();
 
         telemetry.addData("arm pos", arm.currentPos);
+        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
         telemetry.addData("arm target", arm.targetArm);
         telemetry.addData("arm power", arm.power);
         telemetry.update();
