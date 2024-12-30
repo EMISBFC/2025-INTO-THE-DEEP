@@ -7,7 +7,7 @@ public class Constants {
 //    public static double armP = 2.5, armI = 0.75, armD= 0.5, armF = 0.225;
 
     public static double armP = 0.02, armI = 0.025, armD= 0.001, armF = 0.275;
-    public static final int ARM_UP = 150, ARM_SIDE = 250, ARM_INIT = 0;
+    public static final int ARM_IN = 310, ARM_OUT = 110, ARM_INIT = 0, ARM_MOVING = 125;
     public static final double TICKS_IN_DEG = (double) 360/288*72/45; // = 2
 
     public static final double LOGRIPPER_CLOSE_POS = 0.51, LOGRIPPER_OPEN_POS = 0.9;

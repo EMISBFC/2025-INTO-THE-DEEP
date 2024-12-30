@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class highGripper {
-    private Servo high_gripper;
+    public Servo high_gripper;
     boolean padLock = false;
     boolean isOpen = false;
     public highGripper(HardwareMap hardwareMap) {

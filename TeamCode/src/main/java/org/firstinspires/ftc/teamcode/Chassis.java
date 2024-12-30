@@ -30,8 +30,8 @@ public class Chassis {
         bl = new Motor(hardwareMap, "bl");
         br = new Motor(hardwareMap, "br");
 
-        fr.motor.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        fr.motor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        br.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         mecanum = new MecanumDrive(fl, fr, bl, br);
 
     }

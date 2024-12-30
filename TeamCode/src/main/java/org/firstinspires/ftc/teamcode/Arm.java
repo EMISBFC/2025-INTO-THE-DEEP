@@ -1,24 +1,19 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Constants;
 public class Arm {
     public int targetArm, currentPos;
 
     public double power;
     private PIDController controller;
     public DcMotor arm;
+
+    public highGripper HighGripper;
 
 //    public MultipleTelemetry telemetry;
 
@@ -27,6 +22,7 @@ public class Arm {
         arm = hardwareMap.get(DcMotor.class, "arm");
         controller = new PIDController(Constants.armP, Constants.armI, Constants.armD);
         targetArm = Constants.ARM_INIT;
+        HighGripper = new highGripper(hardwareMap);
 
 //        int currentPos = arm.getCurrentPosition();
 //        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -42,20 +38,29 @@ public class Arm {
 
 
         if (gamepad.circle) {
-            while(targetArm != Constants.ARM_UP){
-                if(targetArm>Constants.ARM_UP)targetArm--;
+            while(targetArm != Constants.ARM_IN){
+                if(targetArm>Constants.ARM_IN)targetArm--;
                 else targetArm++;
             }
 //            arm.setTargetPosition(Constants.ARM_UP);
 //            target = Constants.ARM_UP;
         }
         if (gamepad.square) {
-            while(targetArm != Constants.ARM_SIDE){
-                if(targetArm>Constants.ARM_SIDE)targetArm--;
+            while(targetArm != Constants.ARM_OUT){
+                if(targetArm>Constants.ARM_OUT)targetArm--;
                 else targetArm++;
             }
+            HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+//            HighGripper.padLock = true;
+            HighGripper.isOpen = true;
 //            arm.setTargetPosition(Constants.ARM_SIDE);
 //            target = Constants.ARM_SIDE;
+        }
+        if (gamepad.left_stick_button){
+            while(targetArm != Constants.ARM_MOVING){
+                if(targetArm>Constants.ARM_MOVING)targetArm--;
+                else targetArm++;
+            }
         }
 
         double pid = controller.calculate(currentPos, targetArm);
