@@ -14,6 +14,7 @@ public class highGripper {
         isOpen = false;
     }
 
+    
     public void handleServo(Gamepad gamepad){
 
         if(gamepad.triangle && !padLock && isOpen){ // end me , ty u/4106Thumbs

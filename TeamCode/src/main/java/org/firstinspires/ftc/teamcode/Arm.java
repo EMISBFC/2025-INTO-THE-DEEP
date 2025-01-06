@@ -63,6 +63,13 @@ public class Arm {
             }
         }
 
+        if (gamepad.right_stick_button){
+            while(targetArm != Constants.ARM_FUCKED){
+                if(targetArm>Constants.ARM_FUCKED)targetArm--;
+                else targetArm++;
+            }
+        }
+
         double pid = controller.calculate(currentPos, targetArm);
         double ff = Math.cos(Math.toRadians(targetArm/Constants.TICKS_IN_DEG)) * Constants.armF;
         power = 0.75*(pid + ff);
