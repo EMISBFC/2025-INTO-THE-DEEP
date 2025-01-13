@@ -14,4 +14,6 @@ public class Constants {
     public static final double HIGRIPPER_CLOSE_POS = 0.95, HIGRIPPER_OPEN_POS = 0.4;
 
     public static final double InRotPosUp = 0.1, InRotPosMid =0.6, InRotPosDown = 0.9;
+    public static double liftP = 0.0, liftI = 0.0, liftD = 0.0;
+    public static final int LIFT_IN = 0, LIFT_OUT = 0, LIFT_INIT = 0, LIFT_MOVING = 0, LIFT_FUCKED = 0;
 }
