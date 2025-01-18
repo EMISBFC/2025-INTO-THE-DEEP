@@ -32,14 +32,19 @@ public class SplineHell extends LinearOpMode {
 
         // Build the custom trajectory actions
         Action trajectoryAction = drive.actionBuilder(beginPose)
-                .strafeTo(new Vector2d(-4, -72))
-                .waitSeconds(0.7)
-                .splineTo(new Vector2d(8.94, -38.26), Math.toRadians(90.00))
-                .splineTo(new Vector2d(26.64, -35.12), Math.toRadians(90.00))
-                .splineTo(new Vector2d(36.97, -20.74), Math.toRadians(90.00))
-                .splineTo(new Vector2d(48.03, -9.86), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-4, -35), Math.toRadians(90.00))
+                .lineToY(-45)
+                .splineToLinearHeading(new Pose2d(42, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(62, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                //.splineToLinearHeading(new Pose2d(42, -60.48, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .lineToY(-60.48)
+                .strafeTo(new Vector2d(62, -56))
+                .strafeTo(new Vector2d(45, -70))
+                .strafeTo(new Vector2d(-5, -37))
+                .strafeTo(new Vector2d(45, -70))
+                .strafeTo(new Vector2d(-3, -37))
+                .strafeTo(new Vector2d(45, -70))
                 .build();
-
 
         // Wait for the game to start
         waitForStart();

@@ -9,7 +9,7 @@ public class highGripper {
     boolean padLock = false;
     boolean isOpen = false;
     public highGripper(HardwareMap hardwareMap) {
-        high_gripper = hardwareMap.servo.get("hiServo");
+        high_gripper = hardwareMap.servo.get("highGripperServo");
         high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
         isOpen = false;
     }

@@ -18,7 +18,7 @@ public class ArmPIDOpMode extends LinearOpMode {
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
         // Initialize the ArmControl class
-        armControl = new ArmControl(hardwareMap, "arm_motor");
+        armControl = new ArmControl(hardwareMap, "arm");
 
         // Set initial PID coefficients
         armControl.setPIDCoefficients(ArmPIDConfig.kP, ArmPIDConfig.kI, ArmPIDConfig.kD);

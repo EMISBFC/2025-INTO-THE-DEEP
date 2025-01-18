@@ -35,10 +35,10 @@ public class TeleOpFull  extends OpMode {
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
         //low_gripper = new lowGripper(hardwareMap);
-        //high_gripper = new highGripper(hardwareMap);
+        high_gripper = new highGripper(hardwareMap);
         //gripperSpinner = new GripperSpinner(hardwareMap);
         //horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
-        //arm = new Arm(hardwareMap);
+        arm = new Arm(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
     }
@@ -54,10 +54,10 @@ public class TeleOpFull  extends OpMode {
 
         chassis.fieldCentricDrive(x, y, rx, heading, acc);
         //low_gripper.handleServo(gamepad2);
-        //high_gripper.handleServo(gamepad2);
+        high_gripper.handleServo(gamepad2);
         //gripperSpinner.handleSpinner(gamepad2);
         //horz.handleHorz(gamepad2);
-        //arm.handleArm(gamepad2);
+        arm.handleArm(gamepad2);
  //       telemetry.update();
 
         //telemetry.addData("arm pos", arm.currentPos);
