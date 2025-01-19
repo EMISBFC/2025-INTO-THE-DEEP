@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constants {
     public static double armP = 0.02, armI = 0.025, armD= 0.001, armF = 0.275;
+    public static final double ARMTOLERANCE = 30;
     public static final int ARM_IN = 315, ARM_OUT = 110, ARM_INIT = 0, ARM_MOVING = 125, ARM_FUCKED = 305;
     public static final double TICKS_IN_DEG = (double) 360/288*72/45; // =
 

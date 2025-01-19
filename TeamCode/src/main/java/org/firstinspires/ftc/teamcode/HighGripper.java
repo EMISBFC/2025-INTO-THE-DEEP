@@ -4,30 +4,29 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-public class highGripper {
-    public Servo high_gripper;
-    boolean padLock = false;
-    boolean isOpen = false;
-    public highGripper(HardwareMap hardwareMap) {
+import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+
+public class HighGripper {
+    static public Servo high_gripper;
+    static private boolean padLock = false;
+    static private boolean isOpen = false;
+
+    public HighGripper(HardwareMap hardwareMap) {
         high_gripper = hardwareMap.servo.get("highGripperServo");
         high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
         isOpen = false;
     }
 
-    
-    public void handleServo(Gamepad gamepad){
-
-        if(gamepad.triangle && !padLock && isOpen){ // end me , ty u/4106Thumbs
-
+    public void handleServo(Gamepad gamepad) {
+        if (gamepad.triangle && !padLock && isOpen) {
             high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
             padLock = true;
             isOpen = false;
-        }
-        else if(gamepad.triangle && !padLock && !isOpen){
+        } else if (gamepad.triangle && !padLock && !isOpen) {
             high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
             padLock = true;
             isOpen = true;
-        }
-        else if(!gamepad.triangle && padLock) padLock = false;
+        } else if (!gamepad.triangle && padLock) padLock = false;
     }
 }

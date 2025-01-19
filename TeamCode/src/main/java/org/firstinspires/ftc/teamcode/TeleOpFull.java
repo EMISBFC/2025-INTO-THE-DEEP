@@ -16,7 +16,7 @@ public class TeleOpFull  extends OpMode {
     private Chassis chassis;
 //    private PIDController controller;
     private lowGripper low_gripper;
-    private highGripper high_gripper;
+    private HighGripper high_gripper;
     private GripperSpinner gripperSpinner;
     private Horz horz;
     private Arm arm;
@@ -31,13 +31,13 @@ public class TeleOpFull  extends OpMode {
 
     @Override
     public void init() {
-        //telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
-        //low_gripper = new lowGripper(hardwareMap);
-        high_gripper = new highGripper(hardwareMap);
-        //gripperSpinner = new GripperSpinner(hardwareMap);
-        //horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
+        low_gripper = new lowGripper(hardwareMap);
+        high_gripper = new HighGripper(hardwareMap);
+        gripperSpinner = new GripperSpinner(hardwareMap);
+        horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
@@ -53,20 +53,20 @@ public class TeleOpFull  extends OpMode {
 
 
         chassis.fieldCentricDrive(x, y, rx, heading, acc);
-        //low_gripper.handleServo(gamepad2);
+        low_gripper.handleServo(gamepad2);
         high_gripper.handleServo(gamepad2);
-        //gripperSpinner.handleSpinner(gamepad2);
-        //horz.handleHorz(gamepad2);
+        gripperSpinner.handleSpinner(gamepad2);
+        horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
- //       telemetry.update();
-
-        //telemetry.addData("arm pos", arm.currentPos);
-        //telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-        //telemetry.addData("arm target", arm.targetArm);
-        //telemetry.addData("arm power", arm.power);
         telemetry.update();
 
-//        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-//        telemetry.update();
+        telemetry.addData("arm pos", arm.currentPos);
+        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+        telemetry.addData("arm target", arm.targetArm);
+        telemetry.addData("arm power", arm.power);
+        telemetry.update();
+
+        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+        telemetry.update();
     }
 }
