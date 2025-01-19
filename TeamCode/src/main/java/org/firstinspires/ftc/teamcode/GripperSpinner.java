@@ -8,8 +8,8 @@ public class GripperSpinner {
     private Servo LRot;
     private Servo RRot;
     public GripperSpinner(HardwareMap hardwareMap){
-        LRot = hardwareMap.servo.get("loRotL");
-        RRot = hardwareMap.servo.get("loRotR");
+        LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
+        RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
         LRot.setDirection(Servo.Direction.REVERSE);
         LRot.setPosition(Constants.InRotPosDown);
         RRot.setDirection(Servo.Direction.FORWARD);

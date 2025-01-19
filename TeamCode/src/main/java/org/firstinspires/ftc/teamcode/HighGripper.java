@@ -4,16 +4,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-
 public class HighGripper {
     static public Servo high_gripper;
     static private boolean padLock = false;
     static private boolean isOpen = false;
 
     public HighGripper(HardwareMap hardwareMap) {
-        high_gripper = hardwareMap.servo.get("highGripperServo");
+        high_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.HIGHGRIPPER);
         high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
         isOpen = false;
     }
