@@ -20,8 +20,8 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.Constants.Constants;
+import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
 @Autonomous(name = "TEST", group = "Autonomous")
 public class TEST extends LinearOpMode {

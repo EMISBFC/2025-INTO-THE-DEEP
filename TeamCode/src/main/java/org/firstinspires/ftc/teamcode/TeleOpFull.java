@@ -8,6 +8,13 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
+import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
+import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
+import org.firstinspires.ftc.teamcode.Mechanisms.Horz;
+import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
+
 
 @Config
 @TeleOp(name="Teleop FULL")
