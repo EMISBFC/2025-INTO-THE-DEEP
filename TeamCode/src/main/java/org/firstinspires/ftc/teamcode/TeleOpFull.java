@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
+import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
 import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.Mechanisms.Horz;
@@ -27,6 +28,7 @@ public class TeleOpFull  extends OpMode {
     private GripperSpinner gripperSpinner;
     private Horz horz;
     private Arm arm;
+    private Elevator elevator;
 
 
     public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
@@ -46,6 +48,7 @@ public class TeleOpFull  extends OpMode {
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
+        elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
     }
@@ -65,8 +68,8 @@ public class TeleOpFull  extends OpMode {
         gripperSpinner.handleSpinner(gamepad2);
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
+        elevator.handleElevator(gamepad1);
         telemetry.update();
-
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
         telemetry.addData("arm target", arm.targetArm);

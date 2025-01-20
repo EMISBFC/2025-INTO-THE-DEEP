@@ -13,52 +13,56 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-
 import androidx.annotation.NonNull;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
-@Autonomous(name = "TEST", group = "Autonomous")
-public class TEST extends LinearOpMode {
+@Autonomous(name = "IMPOSABLE", group = "Autonomous")
+public class RightAutoLevelImpossible extends LinearOpMode {
     public class AutoArm {
 
-        // Constants for target positions in ticks
-        public static final int TRANSITION_POSITION = (int) (30 * Constants.TICKS_IN_DEG);
-        public static final int HANG_POSITION = (int) (70 * Constants.TICKS_IN_DEG);
-        public static final int GRAB_POSITION = (int) (130 * Constants.TICKS_IN_DEG);
+        public static final int TRANSITION_POSITION = (int) (40 * Constants.TICKS_IN_DEG);
+        public static final int GRAB_POSITION = (int) (160 * Constants.TICKS_IN_DEG);
 
         private final DcMotor armMotor;
         private final PIDController pidController;
         private int targetPosition;
 
         public AutoArm(HardwareMap hardwareMap) {
-            armMotor = hardwareMap.get(DcMotor.class, "arm");
+            armMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             pidController = new PIDController(Constants.armP, Constants.armI, Constants.armD);
-            targetPosition = 0; // Default starting position
+            targetPosition = 0;
         }
 
         private void updateArmPosition() {
             int currentPosition = armMotor.getCurrentPosition();
             double pid = pidController.calculate(currentPosition, targetPosition);
             double ff = Math.cos(Math.toRadians(currentPosition / Constants.TICKS_IN_DEG)) * Constants.armF;
-            double power = 0.75 * (pid + ff);
+            double power = pid + ff;
 
-            // Clamp power to the motor's range
             power = Math.max(-1.0, Math.min(1.0, power));
-
             armMotor.setPower(power);
         }
 
-        // Nested classes for actions
+        public void maintainPosition() {
+            updateArmPosition();
+        }
+
+        public void setTargetPosition(int position) {
+            targetPosition = position;
+        }
+
         public class ToTransition implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -68,14 +72,6 @@ public class TEST extends LinearOpMode {
             }
         }
 
-        public class ToHang implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = HANG_POSITION;
-                updateArmPosition();
-                return Math.abs(armMotor.getCurrentPosition() - targetPosition) < Constants.ARMTOLERANCE;
-            }
-        }
 
         public class ToGrab implements Action {
             @Override
@@ -86,13 +82,8 @@ public class TEST extends LinearOpMode {
             }
         }
 
-        // Methods to return actions
         public Action toTransition() {
             return new ToTransition();
-        }
-
-        public Action toHang() {
-            return new ToHang();
         }
 
         public Action toGrab() {
@@ -105,32 +96,34 @@ public class TEST extends LinearOpMode {
         private boolean isOpen;
 
         public AutoHighGripper(HardwareMap hardwareMap) {
-            highGripper = hardwareMap.servo.get("highGripperServo");
+            highGripper = hardwareMap.servo.get(ConstantNamesHardwaremap.HIGHGRIPPER);
             highGripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
-            isOpen = false; // Initially closed
+            isOpen = false;
         }
-
-        // Action to open the gripper
         public class OpenHighGripper implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 highGripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
                 isOpen = true;
+
                 return false;
             }
         }
 
-        // Action to close the gripper
         public class CloseHighGripper implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 highGripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
                 isOpen = false;
                 return false;
             }
         }
 
-        // Public methods to return actions
         public Action openGripper() {
             return new OpenHighGripper();
         }
@@ -139,7 +132,6 @@ public class TEST extends LinearOpMode {
             return new CloseHighGripper();
         }
 
-        // Optional: Getter to check the current state
         public boolean isGripperOpen() {
             return isOpen;
         }
@@ -147,70 +139,93 @@ public class TEST extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        // Initial robot pose
         Pose2d beginPose = new Pose2d(-4, -72, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         AutoArm arm = new AutoArm(hardwareMap);
         AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
 
-        // Define the actions with proper starting poses
+        Thread armThread = new Thread(() -> {
+            while (!isStopRequested()) {
+                arm.maintainPosition();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+
+        armThread.start();
+
         Action firstHang = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(-4, -35), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-4, -42), Math.toRadians(90.00))
                 .build();
 
-        Pose2d firstHangPose = new Pose2d(-4, -35, Math.toRadians(90.00));
-        Action secongHang = drive.actionBuilder(firstHangPose)
-                .splineTo(new Vector2d(-10, -40), Math.toRadians(90.00))
-                .build();
-
-        Pose2d secongHangPose = new Pose2d(-10, -40, Math.toRadians(90.00));
-        Action thirdHang = drive.actionBuilder(secongHangPose)
-                .splineTo(new Vector2d(-20, -45), Math.toRadians(90.00))
-                .build();
-
-        Pose2d thirdHangPose = new Pose2d(-20, -45, Math.toRadians(90.00));
-        Action moveSampleAndGrab = drive.actionBuilder(thirdHangPose)
-                .splineToLinearHeading(new Pose2d(42, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
+        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -42, Math.toRadians(90.00)))
+                .lineToY(-45)
+                .splineToLinearHeading(new Pose2d(40, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
                 .splineToLinearHeading(new Pose2d(62, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .lineToY(-60.48)
+                .lineToY(-24)
+                .splineToLinearHeading(new Pose2d(75, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
                 .lineToY(-60.48)
                 .strafeTo(new Vector2d(62, -56))
                 .strafeTo(new Vector2d(45, -70))
                 .build();
 
-        Pose2d grabPose = new Pose2d(45, -70, Math.toRadians(90.00));
-        Action Grab = drive.actionBuilder(grabPose)
+        Action secondHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(1, -43))
+                .build();
+        Action Grab = drive.actionBuilder( new Pose2d(1, -43, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(45, -70))
+                .build();
+        Action thirdHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-7, -44.5))
+                .build();
+        Action GrabAgain = drive.actionBuilder( new Pose2d(-7, -44.5, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(45, -70))
+                .build();
+        Action fourthHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(5, -44))
+                .build();
+        Action park = drive.actionBuilder(new Pose2d(5, -42, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(45, -70))
                 .build();
 
-        Pose2d parkPose = new Pose2d(45, -70, Math.toRadians(90.00));
-        Action park = drive.actionBuilder(parkPose)
-                .strafeTo(new Vector2d(42, -70))
-                .build();
+        highGripper.closeGripper();
 
         waitForStart();
 
         if (opModeIsActive()) {
-            // Execute the trajectory with updated poses
             Actions.runBlocking(new SequentialAction(
+                    arm.toTransition(),
                     firstHang,
+                    arm.toGrab(),
                     highGripper.openGripper(),
                     moveSampleAndGrab,
                     highGripper.closeGripper(),
                     arm.toTransition(),
-                    secongHang,
-                    arm.toHang(),
-                    highGripper.openGripper(),
+                    secondHang,
                     arm.toGrab(),
+                    highGripper.openGripper(),
                     Grab,
                     highGripper.closeGripper(),
                     arm.toTransition(),
                     thirdHang,
-                    arm.toHang(),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    GrabAgain,
+                    highGripper.closeGripper(),
+                    arm.toTransition(),
+                    fourthHang,
+                    arm.toGrab(),
                     highGripper.openGripper(),
                     park
             ));
         }
+
+        armThread.interrupt();
+        armThread.join();
     }
-
-
 }
