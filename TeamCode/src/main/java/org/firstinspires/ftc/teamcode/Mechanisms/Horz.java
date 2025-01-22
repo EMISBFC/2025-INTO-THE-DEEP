@@ -21,7 +21,7 @@ public class Horz{
         horz = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.HORZ);
         horz.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horz.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH);
+        limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH  );
     }
     public void handleHorz(Gamepad gamepad) {
         if (limit_switch.isPressed()) {

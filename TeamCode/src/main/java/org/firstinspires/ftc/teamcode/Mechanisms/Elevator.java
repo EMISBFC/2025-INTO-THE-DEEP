@@ -1,24 +1,28 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
+import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Elevator {
 
     // Target positions in ticks
     public static final int BOTTOM_POSITION = 0;
-    public static final int MIDDLE_POSITION = 1000; // Replace with actual tick values
-    public static final int TOP_POSITION = 2000;   // Replace with actual tick values
+    public static final int MIDDLE_POSITION = 2000; // Replace with actual tick values
+    public static final int TOP_POSITION = 2800;   // Replace with actual tick values
 
+    private final PIDController controller;
     private final DcMotor leftElevatorMotor;
     private final DcMotor rightElevatorMotor;
 
     private int targetPosition;
-    private double power;
+    public double powerLeft;
+    public double powerRight;
 
     public Elevator(HardwareMap hardwareMap) {
         // Initialize the motors
@@ -35,38 +39,52 @@ public class Elevator {
         // Reverse one motor to ensure they move in sync
         leftElevatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        targetPosition = BOTTOM_POSITION; // Default to the bottom position
+        // Initialize PID controller
+        controller = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
+        targetPosition = BOTTOM_POSITION; // Default to bottom position
     }
 
     public void handleElevator(Gamepad gamepad) {
-        // Use triggers to control elevator
-        if (gamepad.right_trigger > 0.1) {
-            moveUp(gamepad.right_trigger);
-        } else if (gamepad.left_trigger > 0.1) {
-            moveDown(gamepad.left_trigger);
-        } else {
-            stopElevator();
+        // Check for inputs to transition between positions
+        if (gamepad.dpad_down) {
+            moveToBottom();
+        } else if (gamepad.dpad_right) {
+            moveToMiddle();
+        } else if (gamepad.dpad_up) {
+            moveToTop();
         }
 
-        // Update motor power
+        // Update motor power with PID
         updateElevator();
     }
 
-    public void moveUp(double triggerValue) {
-        power = triggerValue; // Scale power
+    public void moveToBottom() {
+        targetPosition = BOTTOM_POSITION;
     }
 
-    public void moveDown(double triggerValue) {
-        power = -triggerValue; // Scale power
+    public void moveToMiddle() {
+        targetPosition = MIDDLE_POSITION;
     }
 
-    public void stopElevator() {
-        power = 0;
+    public void moveToTop() {
+        targetPosition = TOP_POSITION;
     }
 
     private void updateElevator() {
-        // Set power to both motors
-        leftElevatorMotor.setPower(power);
-        rightElevatorMotor.setPower(power);
+        int currentPositionLeft = leftElevatorMotor.getCurrentPosition();
+        int currentPositionRight = rightElevatorMotor.getCurrentPosition();
+        double pidLeft = controller.calculate(currentPositionLeft, targetPosition);
+        double pidRight = controller.calculate(currentPositionRight, targetPosition);
+        double ffLeft = Math.cos(Math.toRadians(currentPositionLeft / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
+        double ffRight = Math.cos(Math.toRadians(currentPositionRight / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
+        powerLeft = 1 * (pidLeft + ffLeft);
+        powerRight = 1 * (pidRight + ffRight);
+
+        // Clamp power to motor range
+        powerLeft = Math.max(-1.0, Math.min(1.0, powerLeft));
+        powerRight = Math.max(-1.0, Math.min(1.0, powerRight));
+
+        leftElevatorMotor.setPower(powerLeft);
+        rightElevatorMotor.setPower(powerRight);
     }
 }

@@ -69,14 +69,13 @@ public class TeleOpFull  extends OpMode {
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
         elevator.handleElevator(gamepad1);
+
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-        telemetry.addData("arm target", arm.targetArm);
         telemetry.addData("arm power", arm.power);
-        telemetry.update();
-
-        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
+        telemetry.addData("elevator power L", elevator.powerLeft);
+        telemetry.addData("elevator power R", elevator.powerRight);
         telemetry.update();
     }
 }
