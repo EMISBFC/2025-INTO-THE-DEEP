@@ -1,15 +1,21 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.controller.PIDController;
 import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
+import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
+import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
+import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
+import org.firstinspires.ftc.teamcode.Mechanisms.Horz;
+import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
+
 
 @Config
 @TeleOp(name="Teleop FULL")
@@ -18,10 +24,11 @@ public class TeleOpFull  extends OpMode {
     private Chassis chassis;
 //    private PIDController controller;
     private lowGripper low_gripper;
-    private highGripper high_gripper;
+    private HighGripper high_gripper;
     private GripperSpinner gripperSpinner;
     private Horz horz;
     private Arm arm;
+    private Elevator elevator;
 
 
     public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
@@ -37,10 +44,11 @@ public class TeleOpFull  extends OpMode {
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
         low_gripper = new lowGripper(hardwareMap);
-        high_gripper = new highGripper(hardwareMap);
+        high_gripper = new HighGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
+        elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
     }
@@ -60,15 +68,14 @@ public class TeleOpFull  extends OpMode {
         gripperSpinner.handleSpinner(gamepad2);
         horz.handleHorz(gamepad2);
         arm.handleArm(gamepad2);
- //       telemetry.update();
+        elevator.handleElevator(gamepad1);
 
+        telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-        telemetry.addData("arm target", arm.targetArm);
         telemetry.addData("arm power", arm.power);
+        telemetry.addData("elevator power L", elevator.powerLeft);
+        telemetry.addData("elevator power R", elevator.powerRight);
         telemetry.update();
-
-//        telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-//        telemetry.update();
     }
 }
