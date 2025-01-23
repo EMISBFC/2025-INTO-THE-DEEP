@@ -8,6 +8,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
 import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
@@ -44,6 +45,7 @@ public class TeleOpLeft extends OpMode {
         imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
         low_gripper = new lowGripper(hardwareMap);
+
         high_gripper = new HighGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
@@ -69,7 +71,9 @@ public class TeleOpLeft extends OpMode {
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);
         arm.handleArmLeftTele(gamepad2);
-        elevator.handleElevator(gamepad2);
+        arm.handleTransition(gamepad2);
+
+        //elevator.handleElevator(gamepad2);
 
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);

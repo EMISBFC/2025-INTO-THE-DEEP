@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import static java.lang.Thread.sleep;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
@@ -54,6 +57,96 @@ public class Arm {
             moveToGrab();
         }
         updateArm();
+    }
+
+    private enum TransitionState {
+        IDLE,
+        ARM_TO_TRANSITION,
+        OPEN_HIGH_GRIPPER,
+        LOW_GRIPPER_UP,
+        CLOSE_HIGH_GRIPPER,
+        OPEN_LOW_GRIPPER,
+        ARM_TO_PUT,
+        GRIPPER_TO_MID
+    }
+
+    private TransitionState transitionState = TransitionState.IDLE;
+    private long transitionStartTime;
+
+    public void handleTransition(Gamepad gamepad) {
+        // Start transition if dpad_up is pressed and we are in the IDLE state
+        if (gamepad.dpad_up && transitionState == TransitionState.IDLE) {
+            transitionState = TransitionState.ARM_TO_TRANSITION;
+            transitionStartTime = System.currentTimeMillis();
+        }
+
+        // State machine logic
+        switch (transitionState) {
+            case ARM_TO_TRANSITION:
+                moveToTransition();
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.OPEN_HIGH_GRIPPER;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case OPEN_HIGH_GRIPPER:
+                HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.LOW_GRIPPER_UP;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case LOW_GRIPPER_UP:
+                GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosUp);
+                GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosUp);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.CLOSE_HIGH_GRIPPER;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case CLOSE_HIGH_GRIPPER:
+                HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.OPEN_LOW_GRIPPER;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case OPEN_LOW_GRIPPER:
+                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.ARM_TO_PUT;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case ARM_TO_PUT:
+                moveToPut();
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.GRIPPER_TO_MID;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case GRIPPER_TO_MID:
+                GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosMid);
+                GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                    transitionState = TransitionState.IDLE; // Transition complete
+                }
+                break;
+
+            case IDLE:
+                // Do nothing, waiting for the next command
+                break;
+        }
     }
 
     public void moveToTransition() {

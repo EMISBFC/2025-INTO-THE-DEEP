@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class GripperSpinner {
-    private Servo LRot;
-    private Servo RRot;
+    public static Servo LRot;
+    public static Servo RRot;
 
     static private boolean padLock = false;
     private boolean clicked;
