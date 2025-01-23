@@ -10,9 +10,9 @@ public class Constants {
     public static final double TICKS_IN_DEG = (double) 360/288*72/45; // =
     public static final double TICKS_IN_DEG_ELEVATOR = 19.0675;
 
-    public static final int MAX_HORZ_POS = 850; // SET  TO 850 AFTER ROBOT LEGAL K THANKS BYE, 150 is legal
+    public static final int MAX_HORZ_POS = 930; // SET  TO 850 AFTER ROBOT LEGAL K THANKS BYE, 150 is legal
 
-    public static final double LOGRIPPER_CLOSE_POS = 0.35, LOGRIPPER_OPEN_POS = 0.9;
+    public static final double LOGRIPPER_CLOSE_POS = 0.405, LOGRIPPER_OPEN_POS = 0.75;
     public static final double HIGRIPPER_CLOSE_POS = 0.95, HIGRIPPER_OPEN_POS = 0.1;
 
     public static final double InRotPosUp = 0.1, InRotPosMid =0.6, InRotPosDown = 0.9;

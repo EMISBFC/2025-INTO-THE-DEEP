@@ -10,34 +10,53 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class GripperSpinner {
     private Servo LRot;
     private Servo RRot;
+
+    static private boolean padLock = false;
+    private boolean clicked;
     public GripperSpinner(HardwareMap hardwareMap){
         LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
         RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
         LRot.setDirection(Servo.Direction.REVERSE);
-        LRot.setPosition(Constants.InRotPosDown);
+        //LRot.setPosition(Constants.InRotPosDown);
         RRot.setDirection(Servo.Direction.FORWARD);
-        RRot.setPosition(Constants.InRotPosDown);
+        //RRot.setPosition(Constants.InRotPosDown);
     }
 
-    public void handleSpinner(Gamepad gamepad) {
+    public void handleSpinnerRight(Gamepad gamepad) {
 
-        if(gamepad.dpad_up) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosUp);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosUp);
-        }
-        if(gamepad.dpad_right) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosMid);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosMid);
-        }
-        if(gamepad.dpad_down) {
+        if(gamepad.triangle && clicked) {
             LRot.setDirection(Servo.Direction.REVERSE);
             LRot.setPosition(Constants.InRotPosDown);
             RRot.setDirection(Servo.Direction.FORWARD);
             RRot.setPosition(Constants.InRotPosDown);
+            clicked = false;
+            padLock = true;
         }
+        else if(gamepad.triangle && !clicked) {
+            LRot.setDirection(Servo.Direction.REVERSE);
+            LRot.setPosition(Constants.InRotPosMid);
+            RRot.setDirection(Servo.Direction.FORWARD);
+            RRot.setPosition(Constants.InRotPosMid);
+            clicked = true;
+            padLock = true;
+        }
+        else if(!gamepad.cross && padLock) padLock = false;
+    }
+
+    public void handleSpinnerLeft(Gamepad gamepad) {
+        if(gamepad.triangle && clicked) {
+            LRot.setDirection(Servo.Direction.REVERSE);
+            LRot.setPosition(Constants.InRotPosDown);
+            RRot.setDirection(Servo.Direction.FORWARD);
+            RRot.setPosition(Constants.InRotPosDown);
+            clicked = false;
+        }
+        else if(gamepad.triangle && !clicked) {
+            LRot.setDirection(Servo.Direction.REVERSE);
+            LRot.setPosition(Constants.InRotPosUp);
+            RRot.setDirection(Servo.Direction.FORWARD);
+            RRot.setPosition(Constants.InRotPosUp);
+            clicked = true;
         }
     }
+}

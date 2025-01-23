@@ -12,9 +12,10 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class Arm {
 
     // Target positions in ticks
-    public static final int TRANSITION_POSITION = (int) (30 * Constants.TICKS_IN_DEG);
-    public static final int HANG_POSITION = (int) (70 * Constants.TICKS_IN_DEG);
-    public static final int GRAB_POSITION = (int) (130 * Constants.TICKS_IN_DEG);
+    public static final int TRANSITION_POSITION = -10;
+    public static final int PUT_POSITION = 256;
+    public static final int HANG_POSITION = 70;
+    public static final int GRAB_POSITION = 350;
 
     public int targetArm;
     public double power;
@@ -31,7 +32,19 @@ public class Arm {
         targetArm = 0; // Default to initial position
     }
 
-    public void handleArm(Gamepad gamepad) {
+    public void handleArmRightTele(Gamepad gamepad) {
+        // Check for inputs to transition between positions
+        if (gamepad.left_bumper) {
+            moveToHang();
+        } else if (gamepad.right_bumper) {
+            moveToGrab();
+        }
+
+        // Update motor power with PID
+        updateArm();
+    }
+
+    public void handleArmLeftTele(Gamepad gamepad) {
         // Check for inputs to transition between positions
         if (gamepad.circle) {
             moveToTransition();
@@ -40,8 +53,6 @@ public class Arm {
         } else if (gamepad.cross) {
             moveToGrab();
         }
-
-        // Update motor power with PID
         updateArm();
     }
 
@@ -56,11 +67,14 @@ public class Arm {
     public void moveToGrab() {
         targetArm = GRAB_POSITION;
     }
+    public void moveToPut() {
+        targetArm = PUT_POSITION;
+    }
 
     public int currentPos;
 
     private void updateArm() {
-        int currentPos = arm.getCurrentPosition();
+        currentPos = arm.getCurrentPosition();
         double pid = controller.calculate(currentPos, targetArm);
         double ff = Math.cos(Math.toRadians(currentPos / Constants.TICKS_IN_DEG)) * Constants.armF;
         power = 0.75 * (pid + ff);
@@ -70,7 +84,5 @@ public class Arm {
 
         arm.setPower(power);
     }
-
-
 
 }
