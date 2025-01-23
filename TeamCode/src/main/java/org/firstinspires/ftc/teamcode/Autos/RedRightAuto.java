@@ -25,7 +25,7 @@ public class RedRightAuto extends LinearOpMode {
         // Build the custom trajectory actions
         Action trajectoryAction = drive.actionBuilder(beginPose)
                 .strafeTo(new Vector2d(-4, -37))
-                .strafeTo(new Vector2d(-4, -45.5))
+                .strafeTo(new Vector2d(-4 , -45.5))
                 .strafeTo(new Vector2d(35, -45.5))
                 .strafeTo(new Vector2d(35, -18))
                 .strafeTo(new Vector2d(45, -18))

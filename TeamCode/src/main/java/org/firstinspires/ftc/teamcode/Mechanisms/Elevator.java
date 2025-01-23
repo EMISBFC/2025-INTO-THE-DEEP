@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class Elevator {
 
     // Target positions in ticks
-    public static final int BOTTOM_POSITION = 0;
+    public static final int BOTTOM_POSITION = 115;
     public static final int MIDDLE_POSITION = 2000; // Replace with actual tick values
     public static final int TOP_POSITION = 2800;   // Replace with actual tick values
 
@@ -21,6 +21,8 @@ public class Elevator {
     private final DcMotor rightElevatorMotor;
 
     private int targetPosition;
+    public int leftmoto;
+    public int rightmoto;
     public double powerLeft;
     public double powerRight;
 
@@ -83,7 +85,8 @@ public class Elevator {
         // Clamp power to motor range
         powerLeft = Math.max(-1.0, Math.min(1.0, powerLeft));
         powerRight = Math.max(-1.0, Math.min(1.0, powerRight));
-
+        leftmoto = leftElevatorMotor.getCurrentPosition();
+        rightmoto = rightElevatorMotor.getCurrentPosition();
         leftElevatorMotor.setPower(powerLeft);
         rightElevatorMotor.setPower(powerRight);
     }

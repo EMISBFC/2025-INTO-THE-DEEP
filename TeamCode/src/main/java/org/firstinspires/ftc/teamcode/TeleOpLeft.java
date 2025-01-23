@@ -18,11 +18,11 @@ import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 
 
 @Config
-@TeleOp(name="Teleop FULL")
-public class TeleOpFull  extends OpMode {
+@TeleOp(name="Teleop LEFT!!")
+public class TeleOpLeft extends OpMode {
     private RevIMU imu;
     private Chassis chassis;
-//    private PIDController controller;
+    //    private PIDController controller;
     private lowGripper low_gripper;
     private HighGripper high_gripper;
     private GripperSpinner gripperSpinner;
@@ -63,12 +63,13 @@ public class TeleOpFull  extends OpMode {
 
 
         chassis.fieldCentricDrive(x, y, rx, heading, acc);
-        low_gripper.handleServo(gamepad2);
+        low_gripper.handleServo(gamepad1);
+        gripperSpinner.handleSpinnerLeft(gamepad1);
+
         high_gripper.handleServo(gamepad2);
-        gripperSpinner.handleSpinner(gamepad2);
         horz.handleHorz(gamepad2);
-        arm.handleArm(gamepad2);
-        elevator.handleElevator(gamepad1);
+        arm.handleArmLeftTele(gamepad2);
+        elevator.handleElevator(gamepad2);
 
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
