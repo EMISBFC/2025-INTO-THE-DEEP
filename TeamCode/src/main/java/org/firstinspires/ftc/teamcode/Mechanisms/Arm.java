@@ -60,10 +60,11 @@ public class Arm {
     private enum TransitionState {
         IDLE,
         ARM_TO_TRANSITION,
-        OPEN_HIGH_GRIPPER,
+        LOW_OPEN,
+        LOW_CLOSE,
+        GRIPPER_TO_MID_FIRST,
         LOW_GRIPPER_UP,
         CLOSE_HIGH_GRIPPER,
-        VERIFY_HIGH_GRIPPER_CLOSED,
         OPEN_LOW_GRIPPER,
         ARM_TO_PUT,
         GRIPPER_TO_MID
@@ -84,13 +85,31 @@ public class Arm {
             case ARM_TO_TRANSITION:
                 moveToTransition();
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
-                    transitionState = TransitionState.OPEN_HIGH_GRIPPER;
+                    transitionState = TransitionState.GRIPPER_TO_MID_FIRST;
                     transitionStartTime = System.currentTimeMillis();
                 }
                 break;
 
-            case OPEN_HIGH_GRIPPER:
-                HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+            case GRIPPER_TO_MID_FIRST:
+                GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosMid);
+                GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
+                    transitionState = TransitionState.LOW_OPEN;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case LOW_OPEN:
+                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
+                    transitionState = TransitionState.LOW_CLOSE;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+            case LOW_CLOSE:
+                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.LOW_GRIPPER_UP;
                     transitionStartTime = System.currentTimeMillis();
@@ -115,13 +134,6 @@ public class Arm {
                     transitionStartTime = System.currentTimeMillis();
                 }
                 break;
-
-            /*case VERIFY_HIGH_GRIPPER_CLOSED:
-                if (HighGripper.high_gripper.getPosition() == Constants.HIGRIPPER_CLOSE_POS){
-                    transitionState = TransitionState.OPEN_LOW_GRIPPER;
-                    transitionStartTime = System.currentTimeMillis();
-                }
-                break;*/
 
             case OPEN_LOW_GRIPPER:
                 lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);

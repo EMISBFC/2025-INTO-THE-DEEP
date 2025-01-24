@@ -12,10 +12,10 @@ public class Constants {
 
     public static final int MAX_HORZ_POS = 930; // SET  TO 850 AFTER ROBOT LEGAL K THANKS BYE, 150 is legal
 
-    public static final double LOGRIPPER_CLOSE_POS = 0.405, LOGRIPPER_OPEN_POS = 0.75;
+    public static final double LOGRIPPER_CLOSE_POS = 0.4, LOGRIPPER_A_BIT_OPEN_POS = 0.45, LOGRIPPER_OPEN_POS = 0.75, LOGRIPPER_ORIENT_POS = 0.475;
     public static final double HIGRIPPER_CLOSE_POS = 0.89, HIGRIPPER_OPEN_POS = 0.35;
 
-    public static final double InRotPosUp = 0.2, InRotPosMid =0.55, InRotPosDown = 0.9;
+    public static final double InRotPosUp = 0.15, InRotPosMid =0.55, InRotPosDown = 0.9;
 
     public static double elevatorP = 0.005, elevatorI = 0.0, elevatorD = 0.00, elevatorF = 0.35;
 }
