@@ -12,7 +12,7 @@ public class GripperSpinner {
     public static Servo RRot;
 
     static private boolean padLock = false;
-    private boolean clicked;
+    private boolean isOpen = false;
     public GripperSpinner(HardwareMap hardwareMap){
         LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
         RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
@@ -24,42 +24,42 @@ public class GripperSpinner {
 
     public void handleSpinnerRight(Gamepad gamepad) {
 
-        if(gamepad.triangle && clicked) {
+        if(gamepad.triangle && !padLock && isOpen) {
             LRot.setDirection(Servo.Direction.REVERSE);
             LRot.setPosition(Constants.InRotPosDown);
             RRot.setDirection(Servo.Direction.FORWARD);
             RRot.setPosition(Constants.InRotPosDown);
-            clicked = false;
+            isOpen = false;
             padLock = true;
         }
-        else if(gamepad.triangle && !clicked) {
+        else if(gamepad.triangle && !padLock&& !isOpen) {
             LRot.setDirection(Servo.Direction.REVERSE);
             LRot.setPosition(Constants.InRotPosMid);
             RRot.setDirection(Servo.Direction.FORWARD);
             RRot.setPosition(Constants.InRotPosMid);
-            clicked = true;
+            isOpen = true;
             padLock = true;
         }
-        else if(!gamepad.cross && padLock) padLock = false;
+        else if(!gamepad.triangle && padLock) padLock = false;
     }
 
     public void handleSpinnerLeft(Gamepad gamepad) {
-        if(gamepad.triangle && clicked) {
+        if(gamepad.triangle && !padLock && isOpen) {
             LRot.setDirection(Servo.Direction.REVERSE);
             LRot.setPosition(Constants.InRotPosDown);
             RRot.setDirection(Servo.Direction.FORWARD);
             RRot.setPosition(Constants.InRotPosDown);
-            clicked = false;
+            isOpen = false;
             padLock = true;
         }
-        else if(gamepad.triangle && !clicked) {
+        else if(gamepad.triangle && !padLock&&!isOpen) {
             LRot.setDirection(Servo.Direction.REVERSE);
             LRot.setPosition(Constants.InRotPosUp);
             RRot.setDirection(Servo.Direction.FORWARD);
             RRot.setPosition(Constants.InRotPosUp);
-            clicked = true;
+            isOpen = true;
             padLock = true;
         }
-        else if(!gamepad.cross && padLock) padLock = false;
+        else if(!gamepad.triangle && padLock) padLock = false;
     }
 }

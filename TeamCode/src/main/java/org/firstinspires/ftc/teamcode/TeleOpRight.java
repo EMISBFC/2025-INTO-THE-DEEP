@@ -76,14 +76,14 @@ public class TeleOpRight extends OpMode {
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
-        telemetry.addData("max pos", horz.zero_position+ Constants.MAX_HORZ_POS);
+        telemetry.addData("max pos", horz.zero_position + Constants.MAX_HORZ_POS);
 
         telemetry.addData("arm power", arm.power);
         telemetry.addData("elevator power L", elevator.powerLeft);
         telemetry.addData("elevator power R", elevator.powerRight);
         telemetry.addData("Pressed", horz.clicked);
-        telemetry.addData("arm Right", elevator.rightmoto);
-        telemetry.addData("arm Left", elevator.leftmoto);
+        telemetry.addData("Elevator Right", elevator.rightmoto);
+        telemetry.addData("Elevator Left", elevator.leftmoto);
         telemetry.update();
     }
 }

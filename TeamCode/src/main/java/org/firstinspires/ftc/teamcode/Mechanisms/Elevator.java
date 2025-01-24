@@ -13,7 +13,7 @@ public class Elevator {
 
     // Target positions in ticks
     public static int BOTTOM_POSITION = 115;
-    public static final int MIDDLE_POSITION = 2000; // Replace with actual tick values
+    public static final int MIDDLE_POSITION = 1700; // Replace with actual tick values
     public static final int TOP_POSITION = 2800;   // Replace with actual tick values
 
     private final PIDController controller;

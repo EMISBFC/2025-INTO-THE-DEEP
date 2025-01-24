@@ -16,7 +16,7 @@ public class Arm {
 
     // Target positions in ticks
     public static final int TRANSITION_POSITION = 0;
-    public static final int PUT_POSITION = 256;
+    public static final int PUT_POSITION = 200;
     public static final int HANG_POSITION = 70;
     public static final int GRAB_POSITION = 350;
 
@@ -111,17 +111,17 @@ public class Arm {
             case CLOSE_HIGH_GRIPPER:
                 HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
-                    transitionState = TransitionState.VERIFY_HIGH_GRIPPER_CLOSED;
-                    transitionStartTime = System.currentTimeMillis();
-                }
-                break;
-
-            case VERIFY_HIGH_GRIPPER_CLOSED:
-                if (HighGripper.high_gripper.getPosition() == Constants.HIGRIPPER_CLOSE_POS){
                     transitionState = TransitionState.OPEN_LOW_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
                 }
                 break;
+
+            /*case VERIFY_HIGH_GRIPPER_CLOSED:
+                if (HighGripper.high_gripper.getPosition() == Constants.HIGRIPPER_CLOSE_POS){
+                    transitionState = TransitionState.OPEN_LOW_GRIPPER;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;*/
 
             case OPEN_LOW_GRIPPER:
                 lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);

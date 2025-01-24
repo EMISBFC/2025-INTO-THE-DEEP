@@ -17,5 +17,5 @@ public class Constants {
 
     public static final double InRotPosUp = 0.2, InRotPosMid =0.55, InRotPosDown = 0.9;
 
-    public static double elevatorP = 0.005, elevatorI = 0.0, elevatorD = 0.00, elevatorF = 0.5;
+    public static double elevatorP = 0.005, elevatorI = 0.0, elevatorD = 0.00, elevatorF = 0.35;
 }
