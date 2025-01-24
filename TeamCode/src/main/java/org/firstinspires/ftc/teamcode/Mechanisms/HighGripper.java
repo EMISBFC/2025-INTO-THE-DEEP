@@ -27,17 +27,16 @@ public class HighGripper {
             padLock = true;
         } else if (gamepad.cross && !padLock && !isOpen) {
             OpenGripper();
-            isOpen = true;
+            padLock = true;
         } else if (!gamepad.cross && padLock) padLock = false;
     }
 
     public static void CloseGripper(){
         high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
-        padLock = true;
+        isOpen = false;
     }
     public static void OpenGripper(){
         high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
-        padLock = true;
         isOpen = true;
     }
 }

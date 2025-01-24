@@ -14,7 +14,7 @@ public class Constants {
 
     public static final double LOGRIPPER_CLOSE_POS = 0.4, LOGRIPPER_A_BIT_OPEN_POS = 0.45, LOGRIPPER_OPEN_POS = 0.75, LOGRIPPER_ORIENT_POS = 0.475;
     public static final double HIGRIPPER_CLOSE_POS = 0.89, HIGRIPPER_OPEN_POS = 0.35;
-    public static int TRANSITION_POSITION = -35;
+    public static int TRANSITION_POSITION = -23;
 
     public static final double InRotPosUp = 0.15, InRotPosMid =0.55, InRotPosDown = 0.9;
 

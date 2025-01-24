@@ -54,9 +54,9 @@ public class GripperSpinner {
         }
         else if(gamepad.triangle && !padLock&&!isOpen) {
             LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosUp);
+            LRot.setPosition(Constants.InRotPosMid);
             RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosUp);
+            RRot.setPosition(Constants.InRotPosMid);
             isOpen = true;
             padLock = true;
         }
