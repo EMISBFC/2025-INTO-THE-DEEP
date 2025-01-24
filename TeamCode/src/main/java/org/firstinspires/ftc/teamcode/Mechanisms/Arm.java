@@ -59,6 +59,7 @@ public class Arm {
 
     private enum TransitionState {
         IDLE,
+        OPEN_HIGH_GRIPPER,
         ARM_TO_TRANSITION,
         LOW_OPEN,
         LOW_CLOSE,
@@ -76,12 +77,20 @@ public class Arm {
     public void handleTransition(Gamepad gamepad) {
         // Start transition if dpad_up is pressed and we are in the IDLE state
         if (gamepad.triangle && transitionState == TransitionState.IDLE) {
-            transitionState = TransitionState.ARM_TO_TRANSITION;
+            transitionState = TransitionState.OPEN_HIGH_GRIPPER;
             transitionStartTime = System.currentTimeMillis();
         }
 
         // State machine logic
         switch (transitionState) {
+            case OPEN_HIGH_GRIPPER:
+                HighGripper.OpenGripper();
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
+                    transitionState = TransitionState.ARM_TO_TRANSITION;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
             case ARM_TO_TRANSITION:
                 moveToTransition();
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
@@ -128,7 +137,7 @@ public class Arm {
                 break;
 
             case CLOSE_HIGH_GRIPPER:
-                HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+                HighGripper.CloseGripper();
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.OPEN_LOW_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();

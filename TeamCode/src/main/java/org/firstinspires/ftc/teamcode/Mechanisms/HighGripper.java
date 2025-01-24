@@ -23,13 +23,21 @@ public class HighGripper {
 
     public void handleServo(Gamepad gamepad) {
         if (gamepad.cross && !padLock && isOpen) {
-            high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+            CloseGripper();
             padLock = true;
-            isOpen = false;
         } else if (gamepad.cross && !padLock && !isOpen) {
-            high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
-            padLock = true;
+            OpenGripper();
             isOpen = true;
         } else if (!gamepad.cross && padLock) padLock = false;
+    }
+
+    public static void CloseGripper(){
+        high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+        padLock = true;
+    }
+    public static void OpenGripper(){
+        high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+        padLock = true;
+        isOpen = true;
     }
 }
