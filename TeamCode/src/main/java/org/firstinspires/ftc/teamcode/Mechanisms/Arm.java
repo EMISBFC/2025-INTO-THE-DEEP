@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class Arm {
 
     // Target positions in ticks
-    public static final int TRANSITION_POSITION = 0;
+    public static int TRANSITION_POSITION = Constants.TRANSITION_POSITION;
     public static final int PUT_POSITION = 200;
     public static final int HANG_POSITION = 70;
     public static final int GRAB_POSITION = 350;
@@ -118,9 +118,9 @@ public class Arm {
 
             case LOW_GRIPPER_UP:
                 GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
-                GripperSpinner.LRot.setPosition(Constants.InRotPosUp-0.05);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosUp-0.075);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
-                GripperSpinner.RRot.setPosition(Constants.InRotPosUp-0.05);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosUp-0.075);
                 if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.CLOSE_HIGH_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
