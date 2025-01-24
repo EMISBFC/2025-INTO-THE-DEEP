@@ -16,7 +16,7 @@ public class Arm {
 
     // Target positions in ticks
     public static int TRANSITION_POSITION = Constants.TRANSITION_POSITION;
-    public static final int PUT_POSITION = 200;
+    public static final int PUT_POSITION = 250;
     public static final int HANG_POSITION = 70;
     public static final int GRAB_POSITION = 350;
 

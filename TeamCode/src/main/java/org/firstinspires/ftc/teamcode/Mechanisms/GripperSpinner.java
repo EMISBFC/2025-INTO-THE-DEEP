@@ -12,7 +12,7 @@ public class GripperSpinner {
     public static Servo RRot;
 
     static private boolean padLock = false;
-    private boolean isOpen = false;
+    static private boolean isOpen = false;
     public GripperSpinner(HardwareMap hardwareMap){
         LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
         RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
@@ -43,21 +43,28 @@ public class GripperSpinner {
         else if(!gamepad.triangle && padLock) padLock = false;
     }
 
+    public static void fuckThis(){
+        LRot.setDirection(Servo.Direction.REVERSE);
+        LRot.setPosition(Constants.InRotPosDown);
+        RRot.setDirection(Servo.Direction.FORWARD);
+        RRot.setPosition(Constants.InRotPosDown);
+        isOpen = false;
+    }
+
+    public static void fuckThat(){
+        LRot.setDirection(Servo.Direction.REVERSE);
+        LRot.setPosition(Constants.InRotPosMid);
+        RRot.setDirection(Servo.Direction.FORWARD);
+        RRot.setPosition(Constants.InRotPosMid);
+        isOpen = true;
+    }
     public void handleSpinnerLeft(Gamepad gamepad) {
         if(gamepad.triangle && !padLock && isOpen) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosDown);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosDown);
-            isOpen = false;
+           fuckThis();
             padLock = true;
         }
         else if(gamepad.triangle && !padLock&&!isOpen) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosMid);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosMid);
-            isOpen = true;
+            fuckThat();
             padLock = true;
         }
         else if(!gamepad.triangle && padLock) padLock = false;

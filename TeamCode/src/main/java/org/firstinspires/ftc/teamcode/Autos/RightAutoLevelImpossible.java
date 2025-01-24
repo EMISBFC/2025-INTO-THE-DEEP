@@ -247,31 +247,31 @@ public class RightAutoLevelImpossible extends LinearOpMode {
                 .lineToY(-45)
                 .splineToLinearHeading(new Pose2d(35, -27, Math.toRadians(90.00)), Math.toRadians(90.00))
                 .splineToLinearHeading(new Pose2d(56, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-61)
+                .lineToY(-64)
                 .lineToY(-24)
                 .splineToLinearHeading(new Pose2d(71, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-61)
+                .lineToY(-64)
                 .strafeTo(new Vector2d(62, -56))
-                .strafeTo(new Vector2d(45, -73))
+                .strafeTo(new Vector2d(47, -75))
                 .build();
 
-        Action secondHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+        Action secondHang = drive.actionBuilder(new Pose2d(47, -75, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(-4, -40))
                 .build();
         Action Grab = drive.actionBuilder( new Pose2d(-4, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(45, -73))
+                .strafeTo(new Vector2d(47, -73.5))
                 .build();
-        Action thirdHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+        Action thirdHang = drive.actionBuilder(new Pose2d(47, -73.5, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(-13, -40))
                 .build();
         Action GrabAgain = drive.actionBuilder( new Pose2d(-13, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(45, -73))
+                .strafeTo(new Vector2d(47, -73.5))
                 .build();
-        Action fourthHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+        Action fourthHang = drive.actionBuilder(new Pose2d(47, -74, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(5, -40))
                 .build();
         Action park = drive.actionBuilder(new Pose2d(5, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(60, -73))
+                .strafeTo(new Vector2d(80, -74))
                 .build();
 
         highGripper.closeGripper();
