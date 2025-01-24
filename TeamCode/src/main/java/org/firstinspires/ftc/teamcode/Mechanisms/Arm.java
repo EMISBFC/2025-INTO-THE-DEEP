@@ -49,12 +49,10 @@ public class Arm {
 
     public void handleArmLeftTele(Gamepad gamepad) {
         // Check for inputs to transition between positions
-        if (gamepad.circle) {
+        if (gamepad.left_bumper) {
             moveToTransition();
-        } else if (gamepad.square) {
-            moveToHang();
-        } else if (gamepad.cross) {
-            moveToGrab();
+        } else if (gamepad.right_bumper) {
+            moveToPut();
         }
         updateArm();
     }
@@ -76,7 +74,7 @@ public class Arm {
 
     public void handleTransition(Gamepad gamepad) {
         // Start transition if dpad_up is pressed and we are in the IDLE state
-        if (gamepad.dpad_up && transitionState == TransitionState.IDLE) {
+        if (gamepad.triangle && transitionState == TransitionState.IDLE) {
             transitionState = TransitionState.ARM_TO_TRANSITION;
             transitionStartTime = System.currentTimeMillis();
         }

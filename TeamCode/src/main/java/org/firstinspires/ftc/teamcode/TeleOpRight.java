@@ -71,7 +71,7 @@ public class TeleOpRight extends OpMode {
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);
         arm.handleArmRightTele(gamepad2);
-        elevator.handleElevator(gamepad2);
+        elevator.updateElevator();
 
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);

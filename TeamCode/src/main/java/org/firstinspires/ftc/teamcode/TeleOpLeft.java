@@ -83,7 +83,7 @@ public class TeleOpLeft extends OpMode {
         arm.handleArmLeftTele(gamepad2);
         arm.handleTransition(gamepad2);
 
-        elevator.handleElevator(gamepad1);
+        elevator.handleElevator(gamepad2);
 
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);

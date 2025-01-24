@@ -50,7 +50,7 @@ public class Elevator {
         // Check for inputs to transition between positions
         if (gamepad.dpad_down) {
             moveToBottom();
-        } else if (gamepad.dpad_right) {
+        } else if (gamepad.dpad_left) {
             moveToMiddle();
         } else if (gamepad.dpad_up) {
             moveToTop();
@@ -72,7 +72,7 @@ public class Elevator {
         targetPosition = TOP_POSITION;
     }
 
-    private void updateElevator() {
+    public void updateElevator() {
         int currentPositionLeft = leftElevatorMotor.getCurrentPosition();
         int currentPositionRight = rightElevatorMotor.getCurrentPosition();
         double pidLeft = controller.calculate(currentPositionLeft, targetPosition);
