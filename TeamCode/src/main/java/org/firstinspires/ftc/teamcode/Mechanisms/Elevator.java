@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class Elevator {
 
     // Target positions in ticks
-    public static final int BOTTOM_POSITION = 115;
+    public static int BOTTOM_POSITION = 115;
     public static final int MIDDLE_POSITION = 2000; // Replace with actual tick values
     public static final int TOP_POSITION = 2800;   // Replace with actual tick values
 

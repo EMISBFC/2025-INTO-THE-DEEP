@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner.LRot;
+import static org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner.RRot;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -7,6 +10,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
@@ -48,9 +52,15 @@ public class TeleOpLeft extends OpMode {
 
         high_gripper = new HighGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
+
+        LRot.setDirection(Servo.Direction.REVERSE);
+        LRot.setPosition(Constants.InRotPosMid);
+        RRot.setDirection(Servo.Direction.FORWARD);
+        RRot.setPosition(Constants.InRotPosMid);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         elevator = new Elevator(hardwareMap);
+        Elevator.BOTTOM_POSITION += 70;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
     }
@@ -73,7 +83,7 @@ public class TeleOpLeft extends OpMode {
         arm.handleArmLeftTele(gamepad2);
         arm.handleTransition(gamepad2);
 
-        //elevator.handleElevator(gamepad2);
+        elevator.handleElevator(gamepad1);
 
         telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);

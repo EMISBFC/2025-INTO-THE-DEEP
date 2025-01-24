@@ -28,7 +28,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
     public class AutoArm {
 
         public static final int TRANSITION_POSITION = (int) (40 * Constants.TICKS_IN_DEG);
-        public static final int GRAB_POSITION = (int) (160 * Constants.TICKS_IN_DEG);
+        public static final int GRAB_POSITION = (int) (165 * Constants.TICKS_IN_DEG);
 
         private final DcMotor armMotor;
         private final PIDController pidController;
@@ -90,6 +90,76 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             return new ToGrab();
         }
     }
+    public class AutoElevator {
+
+        private final DcMotor leftElevatorMotor;
+        private final DcMotor rightElevatorMotor;
+        private final PIDController pidController;
+
+        private int targetPosition;
+        public static final int BOTTOM_POSITION = 90;
+        public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
+
+        public AutoElevator(HardwareMap hardwareMap) {
+            // Initialize motors
+            leftElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORLEFT);
+            rightElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORRIGHT);
+
+            leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+            leftElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            rightElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+            leftElevatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftElevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightElevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            // Initialize PID Controller
+            pidController = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
+
+            targetPosition = BOTTOM_POSITION; // Default to the bottom position
+        }
+
+        private void updateElevatorPosition() {
+            int currentPositionLeft = leftElevatorMotor.getCurrentPosition();
+            int currentPositionRight = rightElevatorMotor.getCurrentPosition();
+
+            double pidLeft = pidController.calculate(currentPositionLeft, targetPosition);
+            double pidRight = pidController.calculate(currentPositionRight, targetPosition);
+
+            double ffLeft = Math.cos(Math.toRadians(currentPositionLeft / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
+            double ffRight = Math.cos(Math.toRadians(currentPositionRight / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
+
+            double powerLeft = Math.max(-1.0, Math.min(1.0, pidLeft + ffLeft));
+            double powerRight = Math.max(-1.0, Math.min(1.0, pidRight + ffRight));
+
+            leftElevatorMotor.setPower(powerLeft);
+            rightElevatorMotor.setPower(powerRight);
+        }
+
+        public void maintainPosition() {
+            updateElevatorPosition();
+        }
+
+        public void setTargetPosition(int position) {
+            targetPosition = position;
+        }
+
+        public class ToBottom implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetPosition = BOTTOM_POSITION;
+                updateElevatorPosition();
+                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
+                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
+            }
+        }
+
+        public Action toBottom() {
+            return new ToBottom();
+        }
+    }
 
     public class AutoHighGripper {
         private final Servo highGripper;
@@ -142,6 +212,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         Pose2d beginPose = new Pose2d(-4, -72, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         AutoArm arm = new AutoArm(hardwareMap);
+        AutoElevator elevator = new AutoElevator(hardwareMap);
         AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
 
         Thread armThread = new Thread(() -> {
@@ -156,46 +227,60 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             }
         });
 
-        armThread.start();
+        Thread elevatorThread = new Thread(() -> {
+            while (!isStopRequested()) {
+                elevator.maintainPosition();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
 
         Action firstHang = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(-4, -42), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-4, -40), Math.toRadians(90.00))
                 .build();
 
-        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -42, Math.toRadians(90.00)))
+        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -40, Math.toRadians(90.00)))
                 .lineToY(-45)
-                .splineToLinearHeading(new Pose2d(40, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
-                .splineToLinearHeading(new Pose2d(62, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-60.48)
+                .splineToLinearHeading(new Pose2d(35, -27, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(56, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .lineToY(-61)
                 .lineToY(-24)
-                .splineToLinearHeading(new Pose2d(75, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-60.48)
+                .splineToLinearHeading(new Pose2d(71, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .lineToY(-61)
                 .strafeTo(new Vector2d(62, -56))
-                .strafeTo(new Vector2d(45, -70))
+                .strafeTo(new Vector2d(45, -73))
                 .build();
 
-        Action secondHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(1, -43))
+        Action secondHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-4, -40))
                 .build();
-        Action Grab = drive.actionBuilder( new Pose2d(1, -43, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(45, -70))
+        Action Grab = drive.actionBuilder( new Pose2d(-4, -40, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(45, -73))
                 .build();
-        Action thirdHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-7, -44.5))
+        Action thirdHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-13, -40))
                 .build();
-        Action GrabAgain = drive.actionBuilder( new Pose2d(-7, -44.5, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(45, -70))
+        Action GrabAgain = drive.actionBuilder( new Pose2d(-13, -40, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(45, -73))
                 .build();
-        Action fourthHang = drive.actionBuilder(new Pose2d(45, -70, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(5, -44))
+        Action fourthHang = drive.actionBuilder(new Pose2d(45, -73, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(5, -40))
                 .build();
-        Action park = drive.actionBuilder(new Pose2d(5, -42, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(45, -70))
+        Action park = drive.actionBuilder(new Pose2d(5, -40, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(60, -73))
                 .build();
 
         highGripper.closeGripper();
 
         waitForStart();
+
+        elevator.toBottom();
+        armThread.start();
+        elevatorThread.start();
 
         if (opModeIsActive()) {
             Actions.runBlocking(new SequentialAction(
@@ -224,7 +309,6 @@ public class RightAutoLevelImpossible extends LinearOpMode {
                     park
             ));
         }
-
         armThread.interrupt();
         armThread.join();
     }

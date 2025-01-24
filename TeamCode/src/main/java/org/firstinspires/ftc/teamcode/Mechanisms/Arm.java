@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 public class Arm {
 
     // Target positions in ticks
-    public static final int TRANSITION_POSITION = -10;
+    public static final int TRANSITION_POSITION = 0;
     public static final int PUT_POSITION = 256;
     public static final int HANG_POSITION = 70;
     public static final int GRAB_POSITION = 350;
@@ -32,7 +32,7 @@ public class Arm {
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
 
         controller = new PIDController(Constants.armP, Constants.armI, Constants.armD);
-        targetArm = 0; // Default to initial position
+        targetArm = TRANSITION_POSITION; // Default to initial position
     }
 
     public void handleArmRightTele(Gamepad gamepad) {
@@ -65,6 +65,7 @@ public class Arm {
         OPEN_HIGH_GRIPPER,
         LOW_GRIPPER_UP,
         CLOSE_HIGH_GRIPPER,
+        VERIFY_HIGH_GRIPPER_CLOSED,
         OPEN_LOW_GRIPPER,
         ARM_TO_PUT,
         GRIPPER_TO_MID
@@ -84,7 +85,7 @@ public class Arm {
         switch (transitionState) {
             case ARM_TO_TRANSITION:
                 moveToTransition();
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.OPEN_HIGH_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -92,7 +93,7 @@ public class Arm {
 
             case OPEN_HIGH_GRIPPER:
                 HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.LOW_GRIPPER_UP;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -100,10 +101,10 @@ public class Arm {
 
             case LOW_GRIPPER_UP:
                 GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
-                GripperSpinner.LRot.setPosition(Constants.InRotPosUp);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosUp-0.05);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
-                GripperSpinner.RRot.setPosition(Constants.InRotPosUp);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                GripperSpinner.RRot.setPosition(Constants.InRotPosUp-0.05);
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.CLOSE_HIGH_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -111,7 +112,14 @@ public class Arm {
 
             case CLOSE_HIGH_GRIPPER:
                 HighGripper.high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
+                    transitionState = TransitionState.VERIFY_HIGH_GRIPPER_CLOSED;
+                    transitionStartTime = System.currentTimeMillis();
+                }
+                break;
+
+            case VERIFY_HIGH_GRIPPER_CLOSED:
+                if (HighGripper.high_gripper.getPosition() == Constants.HIGRIPPER_CLOSE_POS){
                     transitionState = TransitionState.OPEN_LOW_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -119,7 +127,7 @@ public class Arm {
 
             case OPEN_LOW_GRIPPER:
                 lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -127,7 +135,7 @@ public class Arm {
 
             case ARM_TO_PUT:
                 moveToPut();
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.GRIPPER_TO_MID;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -138,7 +146,7 @@ public class Arm {
                 GripperSpinner.LRot.setPosition(Constants.InRotPosMid);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
                 GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 1000) {
                     transitionState = TransitionState.IDLE; // Transition complete
                 }
                 break;
