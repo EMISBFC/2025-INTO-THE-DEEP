@@ -25,25 +25,17 @@ public class GripperSpinner {
     public void handleSpinnerRight(Gamepad gamepad) {
 
         if(gamepad.triangle && !padLock && isOpen) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosDown);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosDown);
-            isOpen = false;
+            Down();
             padLock = true;
         }
         else if(gamepad.triangle && !padLock&& !isOpen) {
-            LRot.setDirection(Servo.Direction.REVERSE);
-            LRot.setPosition(Constants.InRotPosMid);
-            RRot.setDirection(Servo.Direction.FORWARD);
-            RRot.setPosition(Constants.InRotPosMid);
-            isOpen = true;
+            Mid();
             padLock = true;
         }
         else if(!gamepad.triangle && padLock) padLock = false;
     }
 
-    public static void fuckThis(){
+    public static void Down(){
         LRot.setDirection(Servo.Direction.REVERSE);
         LRot.setPosition(Constants.InRotPosDown);
         RRot.setDirection(Servo.Direction.FORWARD);
@@ -51,20 +43,27 @@ public class GripperSpinner {
         isOpen = false;
     }
 
-    public static void fuckThat(){
+    public static void Mid(){
         LRot.setDirection(Servo.Direction.REVERSE);
         LRot.setPosition(Constants.InRotPosMid);
         RRot.setDirection(Servo.Direction.FORWARD);
         RRot.setPosition(Constants.InRotPosMid);
         isOpen = true;
     }
+
+    public static void Up(){
+        LRot.setDirection(Servo.Direction.REVERSE);
+        LRot.setPosition(Constants.InRotPosUp);
+        RRot.setDirection(Servo.Direction.FORWARD);
+        RRot.setPosition(Constants.InRotPosUp);
+    }
     public void handleSpinnerLeft(Gamepad gamepad) {
         if(gamepad.triangle && !padLock && isOpen) {
-           fuckThis();
+           Down();
             padLock = true;
         }
         else if(gamepad.triangle && !padLock&&!isOpen) {
-            fuckThat();
+            Mid();
             padLock = true;
         }
         else if(!gamepad.triangle && padLock) padLock = false;

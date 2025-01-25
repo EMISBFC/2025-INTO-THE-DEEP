@@ -175,7 +175,6 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 highGripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
                 isOpen = true;
-
                 return false;
             }
         }

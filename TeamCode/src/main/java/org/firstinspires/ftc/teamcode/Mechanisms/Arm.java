@@ -57,7 +57,7 @@ public class Arm {
         updateArm();
     }
 
-    private enum TransitionState {
+    public enum TransitionState {
         IDLE,
         OPEN_HIGH_GRIPPER,
         ARM_TO_TRANSITION,
@@ -212,5 +212,4 @@ public class Arm {
 
         arm.setPower(power);
     }
-
 }
