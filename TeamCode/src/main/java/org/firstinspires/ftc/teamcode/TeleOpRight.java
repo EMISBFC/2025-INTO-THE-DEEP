@@ -8,7 +8,6 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.apache.commons.math3.analysis.function.Constant;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
 import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
@@ -52,6 +51,7 @@ public class TeleOpRight extends OpMode {
         arm = new Arm(hardwareMap);
         elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        Constants.ELEVATOR_BOTTOM_POSITION = 0; // what the fuck why the fuck huh how does this result in 160 what in fuck holy shit what -ofek
         imu.init();
     }
 
@@ -73,17 +73,15 @@ public class TeleOpRight extends OpMode {
         arm.handleArmRightTele(gamepad2);
         elevator.updateElevator();
 
-        telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
         telemetry.addData("max pos", horz.zero_position + Constants.MAX_HORZ_POS);
-
         telemetry.addData("arm power", arm.power);
         telemetry.addData("elevator power L", elevator.powerLeft);
         telemetry.addData("elevator power R", elevator.powerRight);
         telemetry.addData("Pressed", horz.clicked);
-        telemetry.addData("Elevator Right", elevator.rightmoto);
-        telemetry.addData("Elevator Left", elevator.leftmoto);
+        telemetry.addData("Elevator Right", elevator.ElevatorRightMotorTele);
+        telemetry.addData("Elevator Left", elevator.ElevatorLeftMotorTele);
         telemetry.update();
     }
 }

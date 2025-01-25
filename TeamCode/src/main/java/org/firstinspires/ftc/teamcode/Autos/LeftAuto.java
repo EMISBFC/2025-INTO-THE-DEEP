@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-import static org.firstinspires.ftc.teamcode.Mechanisms.Elevator.MIDDLE_POSITION;
-import static org.firstinspires.ftc.teamcode.Mechanisms.Elevator.TOP_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_MIDDLE_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_TOP_POSITION;
 
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -34,7 +34,7 @@ public class LeftAuto extends LinearOpMode {
     public static boolean startedTransition = false;
     public static class AutoArm {
 
-        public final int TRANSITION_POSITION = Constants.TRANSITION_POSITION;
+        public final int TRANSITION_POSITION = Constants.ARM_TRANSITION_POSITION;
         public static final int PUT_POSITION = 250;
 
         private final DcMotor armMotor;
@@ -287,7 +287,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToMiddle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = MIDDLE_POSITION;
+                targetPosition = ELEVATOR_MIDDLE_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
@@ -296,7 +296,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToTop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = TOP_POSITION;
+                targetPosition = ELEVATOR_TOP_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;

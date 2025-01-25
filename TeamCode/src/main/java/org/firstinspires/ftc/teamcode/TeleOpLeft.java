@@ -60,7 +60,7 @@ public class TeleOpLeft extends OpMode {
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         elevator = new Elevator(hardwareMap);
-        Elevator.BOTTOM_POSITION = 475;
+        Constants.ELEVATOR_BOTTOM_POSITION = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         imu.init();
     }
@@ -85,14 +85,13 @@ public class TeleOpLeft extends OpMode {
 
         elevator.handleElevator(gamepad2);
 
-        telemetry.update();
         telemetry.addData("arm pos", arm.currentPos);
         telemetry.addData("horz pos", horz.horz.getCurrentPosition());
         telemetry.addData("arm power", arm.power);
         telemetry.addData("elevator power L", elevator.powerLeft);
         telemetry.addData("elevator power R", elevator.powerRight);
-        telemetry.addData("Elevator Right", elevator.rightmoto);
-        telemetry.addData("Elevator Left", elevator.leftmoto);
+        telemetry.addData("Elevator Right", elevator.ElevatorRightMotorTele);
+        telemetry.addData("Elevator Left", elevator.ElevatorLeftMotorTele);
         telemetry.update();
     }
 }

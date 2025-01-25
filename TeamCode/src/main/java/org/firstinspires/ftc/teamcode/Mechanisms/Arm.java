@@ -14,12 +14,6 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Arm {
 
-    // Target positions in ticks
-    public static int TRANSITION_POSITION = Constants.TRANSITION_POSITION;
-    public static final int PUT_POSITION = 250;
-    public static final int HANG_POSITION = 70;
-    public static final int GRAB_POSITION = 350;
-
     public int targetArm;
     public double power;
     private final PIDController controller;
@@ -27,12 +21,12 @@ public class Arm {
 
     public Arm(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         controller = new PIDController(Constants.armP, Constants.armI, Constants.armD);
-        targetArm = TRANSITION_POSITION; // Default to initial position
+        targetArm = Constants.ARM_TRANSITION_POSITION; // Default to initial position
     }
 
     public void handleArmRightTele(Gamepad gamepad) {
@@ -185,18 +179,18 @@ public class Arm {
     }
 
     public void moveToTransition() {
-        targetArm = TRANSITION_POSITION;
+        targetArm = Constants.ARM_TRANSITION_POSITION;
     }
 
     public void moveToHang() {
-        targetArm = HANG_POSITION;
+        targetArm = Constants.ARM_HANG_POSITION;
     }
 
     public void moveToGrab() {
-        targetArm = GRAB_POSITION;
+        targetArm = Constants.ARM_GRAB_POSITION;
     }
     public void moveToPut() {
-        targetArm = PUT_POSITION;
+        targetArm = Constants.ARM_PUT_POSITION;
     }
 
     public int currentPos;
