@@ -97,7 +97,6 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         private final PIDController pidController;
 
         private int targetPosition;
-        public static final int BOTTOM_POSITION = 90;
         public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
 
         public AutoElevator(HardwareMap hardwareMap) {
@@ -118,7 +117,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             // Initialize PID Controller
             pidController = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
 
-            targetPosition = BOTTOM_POSITION; // Default to the bottom position
+            targetPosition = Constants.ELEVATOR_BOTTOM_POSITION; // Default to the bottom position
         }
 
         private void updateElevatorPosition() {
@@ -149,7 +148,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = BOTTOM_POSITION;
+                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;

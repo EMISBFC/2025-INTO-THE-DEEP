@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
-import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_MIDDLE_POSITION;
-import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_TOP_POSITION;
-
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -33,10 +30,6 @@ import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 public class LeftAuto extends LinearOpMode {
     public static boolean startedTransition = false;
     public static class AutoArm {
-
-        public final int TRANSITION_POSITION = Constants.ARM_TRANSITION_POSITION;
-        public static final int PUT_POSITION = 250;
-
         private final DcMotor armMotor;
         private final PIDController pidController;
         private int targetPosition;
@@ -86,9 +79,9 @@ public class LeftAuto extends LinearOpMode {
         public class ToTransition implements Action {
             @Override
             public boolean run(TelemetryPacket packet) {
-                targetPosition = TRANSITION_POSITION;
+                targetPosition = Constants.ARM_TRANSITION_POSITION;
                 updateArmPosition();
-                packet.put("Target Position", TRANSITION_POSITION);
+                packet.put("Target Position", Constants.ARM_TRANSITION_POSITION);
                 packet.put("Current Position", armMotor.getCurrentPosition());
                 return Math.abs(armMotor.getCurrentPosition() - targetPosition) < Constants.ARMTOLERANCE;
             }
@@ -97,9 +90,9 @@ public class LeftAuto extends LinearOpMode {
         public class ToPut implements Action {
             @Override
             public boolean run(TelemetryPacket packet) {
-                targetPosition = PUT_POSITION;
+                targetPosition = Constants.ARM_PUT_POSITION;
                 updateArmPosition();
-                packet.put("Target Position", PUT_POSITION);
+                packet.put("Target Position", Constants.ARM_PUT_POSITION);
                 packet.put("Current Position", armMotor.getCurrentPosition());
                 return Math.abs(armMotor.getCurrentPosition() - targetPosition) < Constants.ARMTOLERANCE;
             }
@@ -226,7 +219,6 @@ public class LeftAuto extends LinearOpMode {
         private final PIDController pidController;
 
         private int targetPosition;
-        public static final int BOTTOM_POSITION = 505;
         public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
 
         public AutoElevator(HardwareMap hardwareMap) {
@@ -247,7 +239,7 @@ public class LeftAuto extends LinearOpMode {
             // Initialize PID Controller
             pidController = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
 
-            targetPosition = BOTTOM_POSITION; // Default to the bottom position
+            targetPosition = Constants.ELEVATOR_BOTTOM_POSITION; // Default to the bottom position
         }
 
         private void updateElevatorPosition() {
@@ -278,7 +270,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = BOTTOM_POSITION;
+                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
@@ -287,7 +279,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToMiddle implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = ELEVATOR_MIDDLE_POSITION;
+                targetPosition = Constants.ELEVATOR_MIDDLE_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
@@ -296,7 +288,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToTop implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = ELEVATOR_TOP_POSITION;
+                targetPosition = Constants.ELEVATOR_TOP_POSITION;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;

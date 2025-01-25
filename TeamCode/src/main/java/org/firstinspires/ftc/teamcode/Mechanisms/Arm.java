@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
-import static java.lang.Thread.sleep;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -26,7 +25,7 @@ public class Arm {
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         controller = new PIDController(Constants.armP, Constants.armI, Constants.armD);
-        targetArm = Constants.ARM_TRANSITION_POSITION; // Default to initial position
+        targetArm = 0; // go to 0 (i.e. don't move) for initial position
     }
 
     public void handleArmRightTele(Gamepad gamepad) {

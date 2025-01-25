@@ -24,8 +24,8 @@ public class Elevator {
         rightElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORRIGHT);
 
         // Reset and set motor modes
-        leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         leftElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

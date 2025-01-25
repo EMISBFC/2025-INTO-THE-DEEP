@@ -51,7 +51,7 @@ public class TeleOpRight extends OpMode {
         arm = new Arm(hardwareMap);
         elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        Constants.ELEVATOR_BOTTOM_POSITION = 0; // what the fuck why the fuck huh how does this result in 160 what in fuck holy shit what -ofek
+//        Constants.ELEVATOR_BOTTOM_POSITION = 0; // what the fuck why the fuck huh how does this result in 160 what in fuck holy shit what -ofek
         imu.init();
     }
 
