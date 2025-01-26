@@ -207,7 +207,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-4, -72, Math.toRadians(90.00));
+        Pose2d beginPose = new Pose2d(-4, -75, Math.toRadians(90.00));
         MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         AutoArm arm = new AutoArm(hardwareMap);
         AutoElevator elevator = new AutoElevator(hardwareMap);
@@ -238,18 +238,18 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         });
 
         Action firstHang = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(-4, -40), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-4, -35), Math.toRadians(90.00))
                 .build();
 
         Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -40, Math.toRadians(90.00)))
-                .lineToY(-45)
-                .splineToLinearHeading(new Pose2d(35, -27, Math.toRadians(90.00)), Math.toRadians(90.00))
-                .splineToLinearHeading(new Pose2d(56, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .lineToY(-42)
+                .splineToLinearHeading(new Pose2d(42, -25, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(64, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
                 .lineToY(-64)
                 .lineToY(-24)
-                .splineToLinearHeading(new Pose2d(71, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(74, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
                 .lineToY(-64)
-                .strafeTo(new Vector2d(62, -56))
+                .strafeTo(new Vector2d(50, -62))
                 .strafeTo(new Vector2d(47, -75))
                 .build();
 
@@ -257,19 +257,16 @@ public class RightAutoLevelImpossible extends LinearOpMode {
                 .strafeTo(new Vector2d(-4, -40))
                 .build();
         Action Grab = drive.actionBuilder( new Pose2d(-4, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(47, -73.5))
+                .strafeTo(new Vector2d(47, -74.5))
                 .build();
-        Action thirdHang = drive.actionBuilder(new Pose2d(47, -73.5, Math.toRadians(90.00)))
+        Action thirdHang = drive.actionBuilder(new Pose2d(47, -74.5, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(-13, -40))
                 .build();
         Action GrabAgain = drive.actionBuilder( new Pose2d(-13, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(47, -73.5))
+                .strafeTo(new Vector2d(47, -74.5))
                 .build();
         Action fourthHang = drive.actionBuilder(new Pose2d(47, -74, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(5, -40))
-                .build();
-        Action park = drive.actionBuilder(new Pose2d(5, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(80, -74))
                 .build();
 
         highGripper.closeGripper();
@@ -303,8 +300,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
                     arm.toTransition(),
                     fourthHang,
                     arm.toGrab(),
-                    highGripper.openGripper(),
-                    park
+                    highGripper.openGripper()
             ));
         }
         armThread.interrupt();
