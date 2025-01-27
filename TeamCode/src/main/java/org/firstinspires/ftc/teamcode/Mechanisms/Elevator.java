@@ -42,9 +42,9 @@ public class Elevator {
 
     public void handleElevator(Gamepad gamepad) {
         // Check for inputs to transition between positions
-        if (gamepad.dpad_down && block) {
+        if (gamepad.dpad_down && !block) {
             moveToBottom();
-        } else if (gamepad.dpad_left && block) {
+        } else if (gamepad.dpad_left && !block) {
             moveToMiddle();
         } else if (gamepad.dpad_up) {
             moveToTop();

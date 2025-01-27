@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
 
+import static org.firstinspires.ftc.teamcode.Mechanisms.Elevator.block;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -159,6 +161,7 @@ public class Arm {
                 GripperSpinner.LRot.setPosition(Constants.InRotPosMid);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
                 GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
+                block = true;
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
                     transitionState = TransitionState.LOW_FINAL_CLOSE; // Transition complete
                 }
@@ -179,6 +182,7 @@ public class Arm {
 
     public void moveToTransition() {
         targetArm = Constants.ARM_TRANSITION_POSITION;
+        block = false;
     }
 
     public void moveToHang() {
@@ -190,6 +194,7 @@ public class Arm {
     }
     public void moveToPut() {
         targetArm = Constants.ARM_PUT_POSITION;
+        block = true;
     }
 
     public int currentPos;
