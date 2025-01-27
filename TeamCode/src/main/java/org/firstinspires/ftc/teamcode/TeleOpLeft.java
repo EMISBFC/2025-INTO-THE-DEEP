@@ -25,7 +25,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 @Config
 @TeleOp(name="Teleop LEFT!!")
 public class TeleOpLeft extends OpMode {
-    private RevIMU imu;
     private Chassis chassis;
     //    private PIDController controller;
     private lowGripper low_gripper;
@@ -35,18 +34,9 @@ public class TeleOpLeft extends OpMode {
     private Arm arm;
     private Elevator elevator;
 
-
-    public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-            RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
-    public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-    RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
         low_gripper = new lowGripper(hardwareMap);
 
@@ -62,7 +52,6 @@ public class TeleOpLeft extends OpMode {
         elevator = new Elevator(hardwareMap);
         Constants.ELEVATOR_BOTTOM_POSITION = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        imu.init();
     }
 
     @Override
@@ -71,10 +60,9 @@ public class TeleOpLeft extends OpMode {
         double x = (-gamepad1.left_stick_x);
         double rx = (-gamepad1.right_stick_x);
         double acc = gamepad1.right_trigger;
-        double heading = imu.getRotation2d().getDegrees();
 
 
-        chassis.fieldCentricDrive(x, y, rx, heading, acc);
+        chassis.fieldCentricDrive(x, y, rx, acc);
         low_gripper.handleServo(gamepad1);
         gripperSpinner.handleSpinnerLeft(gamepad1);
 

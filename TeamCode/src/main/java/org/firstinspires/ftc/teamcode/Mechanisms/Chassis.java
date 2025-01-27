@@ -2,9 +2,13 @@ package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 
 public class Chassis {
@@ -12,7 +16,12 @@ public class Chassis {
     private Motor fr;
     private Motor bl;
     private Motor br;
-
+    public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
+            RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
+    public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
+            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
+    RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+    IMU imu;
     MecanumDrive mecanum;
     public Chassis(HardwareMap hardwareMap){
 
@@ -23,15 +32,23 @@ public class Chassis {
         fr.motor.setDirection(DcMotorSimple.Direction.REVERSE);
 //        br.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         mecanum = new MecanumDrive(fl, fr, bl, br);
-
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
+        imu.resetYaw();
     }
 
-    public void fieldCentricDrive(double x, double y, double rx, double heading, double acc){
+    public double getHeading() {
+        YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
+        return orientation.getYaw(AngleUnit.DEGREES);
+    }
+
+
+    public void fieldCentricDrive(double x, double y, double rx, double acc){
         if(acc>0.5) {
-            mecanum.driveFieldCentric(x * 1, y * 1, rx * 1, heading);
+            mecanum.driveFieldCentric(x * 1, y * 1, rx * 1, getHeading());
         }
         else{
-            mecanum.driveFieldCentric(x * 0.75, y * 0.75, rx * 0.75, heading);
+            mecanum.driveFieldCentric(x * 0.75, y * 0.75, rx * 0.75, getHeading());
         }
     }
     public void robotCentricDrive(double x, double y, double rx, double acc){

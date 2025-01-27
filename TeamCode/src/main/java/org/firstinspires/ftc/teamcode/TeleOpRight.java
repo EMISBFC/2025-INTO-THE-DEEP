@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.hardware.RevIMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
@@ -21,7 +22,6 @@ import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 @Config
 @TeleOp(name="Teleop RIGHT!!")
 public class TeleOpRight extends OpMode {
-    private RevIMU imu;
     private Chassis chassis;
 //    private PIDController controller;
     private lowGripper low_gripper;
@@ -31,18 +31,9 @@ public class TeleOpRight extends OpMode {
     private Arm arm;
     private Elevator elevator;
 
-
-    public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-            RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
-    public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-            RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
-    RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-
-
     @Override
     public void init() {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        imu = new RevIMU(hardwareMap);
         chassis = new Chassis(hardwareMap);
         low_gripper = new lowGripper(hardwareMap);
         high_gripper = new HighGripper(hardwareMap);
@@ -52,7 +43,6 @@ public class TeleOpRight extends OpMode {
         elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 //        Constants.ELEVATOR_BOTTOM_POSITION = 0; // what the fuck why the fuck huh how does this result in 160 what in fuck holy shit what -ofek
-        imu.init();
     }
 
     @Override
@@ -61,10 +51,8 @@ public class TeleOpRight extends OpMode {
         double x = (-gamepad1.left_stick_x);
         double rx = (-gamepad1.right_stick_x);
         double acc = gamepad1.right_trigger;
-        double heading = imu.getRotation2d().getDegrees();
 
-
-        chassis.fieldCentricDrive(x, y, rx, heading, acc);
+        chassis.fieldCentricDrive(x, y, rx, acc);
         low_gripper.handleServo(gamepad1);
         gripperSpinner.handleSpinnerRight(gamepad1);
 
