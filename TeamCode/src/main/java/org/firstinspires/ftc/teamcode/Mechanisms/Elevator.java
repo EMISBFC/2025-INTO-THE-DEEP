@@ -17,6 +17,7 @@ public class Elevator {
     private int targetLeft, targetRight;
     public int ElevatorLeftMotorTele, ElevatorRightMotorTele;
     public double powerLeft, powerRight;
+    public static boolean block = false;
 
     public Elevator(HardwareMap hardwareMap) {
         // Initialize the motors
@@ -41,9 +42,9 @@ public class Elevator {
 
     public void handleElevator(Gamepad gamepad) {
         // Check for inputs to transition between positions
-        if (gamepad.dpad_down) {
+        if (gamepad.dpad_down && block) {
             moveToBottom();
-        } else if (gamepad.dpad_left) {
+        } else if (gamepad.dpad_left && block) {
             moveToMiddle();
         } else if (gamepad.dpad_up) {
             moveToTop();

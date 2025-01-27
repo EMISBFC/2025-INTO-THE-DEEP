@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
-@Autonomous(name = "IMPOSABLE", group = "Autonomous")
+@Autonomous(name = "Specimen", group = "Autonomous")
 public class RightAutoLevelImpossible extends LinearOpMode {
     public class AutoArm {
 
@@ -238,35 +238,38 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         });
 
         Action firstHang = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(-4, -35), Math.toRadians(90.00))
+                .splineTo(new Vector2d(-4, -37.5), Math.toRadians(90.00))
                 .build();
 
-        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -40, Math.toRadians(90.00)))
+        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -37.5, Math.toRadians(90.00)))
                 .lineToY(-42)
-                .splineToLinearHeading(new Pose2d(42, -25, Math.toRadians(90.00)), Math.toRadians(90.00))
-                .splineToLinearHeading(new Pose2d(64, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-64)
+                .splineToLinearHeading(new Pose2d(41, -25, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(62.5, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .lineToY(-62)
                 .lineToY(-24)
-                .splineToLinearHeading(new Pose2d(74, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-64)
-                .strafeTo(new Vector2d(50, -62))
-                .strafeTo(new Vector2d(47, -75))
+                .splineToLinearHeading(new Pose2d(75, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(75, -60, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(60, -59, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .strafeTo(new Vector2d(50, -72))
                 .build();
 
-        Action secondHang = drive.actionBuilder(new Pose2d(47, -75, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-4, -40))
+        Action secondHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-4, -36.5))
                 .build();
-        Action Grab = drive.actionBuilder( new Pose2d(-4, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(47, -74.5))
+        Action Grab = drive.actionBuilder( new Pose2d(-4, -36.5, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(50, -72))
                 .build();
-        Action thirdHang = drive.actionBuilder(new Pose2d(47, -74.5, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-13, -40))
+        Action thirdHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-8, -36.5))
                 .build();
-        Action GrabAgain = drive.actionBuilder( new Pose2d(-13, -40, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(47, -74.5))
+        Action GrabAgain = drive.actionBuilder( new Pose2d(-8, -36.5, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(50, -72))
                 .build();
-        Action fourthHang = drive.actionBuilder(new Pose2d(47, -74, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(5, -40))
+        Action fourthHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(8, -36.5))
+                .build();
+        Action park = drive.actionBuilder( new Pose2d(8, -36.5, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(1000, -500))
                 .build();
 
         highGripper.closeGripper();
@@ -300,7 +303,8 @@ public class RightAutoLevelImpossible extends LinearOpMode {
                     arm.toTransition(),
                     fourthHang,
                     arm.toGrab(),
-                    highGripper.openGripper()
+                    highGripper.openGripper(),
+                    park
             ));
         }
         armThread.interrupt();

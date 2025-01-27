@@ -446,10 +446,11 @@ public class LeftAuto extends LinearOpMode {
 
         Action firstTake = drive.actionBuilder(new Pose2d(-65, -62, Math.toRadians(45.00)))
                 .waitSeconds(1)
-                .splineToLinearHeading(new Pose2d(-55.02, -33.28, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(-55.02, -32.7, Math.toRadians(90.00)), Math.toRadians(90.00))
                 .build();
-        Action SecondPut = drive.actionBuilder(new Pose2d(-55.02, -33.28, Math.toRadians(45.00)))
-                .splineToLinearHeading(new Pose2d(-55.56, -59.51, Math.toRadians(45.00)), Math.toRadians(45.00))
+
+        Action Park = drive.actionBuilder(new Pose2d(-55.02, -33.28, Math.toRadians(45.00)))
+                .splineToLinearHeading(new Pose2d(-50, -27, Math.toRadians(45.00)), Math.toRadians(45.00))
                 .waitSeconds(1) // BRO I DIED BUT YES DO THIS.
                 .build();
 
@@ -477,11 +478,9 @@ public class LeftAuto extends LinearOpMode {
                     arm.toTransition(),
                     elevator.toBottom(),
                     lowGripper.closeGripper(),
-                    new ParallelAction(
-                            waitThree,
-                            arm.handleTransition()
-                    ),
-                    SecondPut
+                    waitThree,
+                    Park
+
             ));
         }
         armThread.interrupt();

@@ -29,7 +29,6 @@ public class Chassis {
         fr = new Motor(hardwareMap, ConstantNamesHardwaremap.WHEELFRONTRIGHT);
         bl = new Motor(hardwareMap, ConstantNamesHardwaremap.WHEELBACKLEFT);
         br = new Motor(hardwareMap, ConstantNamesHardwaremap.WHEELBACKRIGHT);
-        fr.motor.setDirection(DcMotorSimple.Direction.REVERSE);
 //        br.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         mecanum = new MecanumDrive(fl, fr, bl, br);
         imu = hardwareMap.get(IMU.class, "imu");
