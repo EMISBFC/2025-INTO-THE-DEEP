@@ -243,32 +243,32 @@ public class RightAutoLevelImpossible extends LinearOpMode {
 
         Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -37.5, Math.toRadians(90.00)))
                 .lineToY(-42)
-                .splineToLinearHeading(new Pose2d(41, -25, Math.toRadians(90.00)), Math.toRadians(90.00))
-                .splineToLinearHeading(new Pose2d(62.5, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(42, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(66, -28.5, Math.toRadians(90.00)), Math.toRadians(-90.00))
                 .lineToY(-62)
                 .lineToY(-24)
-                .splineToLinearHeading(new Pose2d(75, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .splineToLinearHeading(new Pose2d(75, -60, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(78, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
+                .splineToLinearHeading(new Pose2d(78, -60, Math.toRadians(90.00)), Math.toRadians(-90.00))
                 .splineToLinearHeading(new Pose2d(60, -59, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .strafeTo(new Vector2d(50, -72))
+                .strafeTo(new Vector2d(50, -72.3))
                 .build();
 
-        Action secondHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-4, -36.5))
+        Action secondHang = drive.actionBuilder(new Pose2d(50, -72.3, Math.toRadians(90.00)))
+                .strafeTo(new Vector2d(-4, -34.5))
                 .build();
-        Action Grab = drive.actionBuilder( new Pose2d(-4, -36.5, Math.toRadians(90.00)))
+        Action Grab = drive.actionBuilder( new Pose2d(-4, -34.5, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(50, -72))
                 .build();
         Action thirdHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-8, -36.5))
+                .strafeTo(new Vector2d(-7, -36.5))
                 .build();
-        Action GrabAgain = drive.actionBuilder( new Pose2d(-8, -36.5, Math.toRadians(90.00)))
+        Action GrabAgain = drive.actionBuilder( new Pose2d(-70, -36.5, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(50, -72))
                 .build();
         Action fourthHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(8, -36.5))
+                .strafeTo(new Vector2d(12, -36))
                 .build();
-        Action park = drive.actionBuilder( new Pose2d(8, -36.5, Math.toRadians(90.00)))
+        Action park = drive.actionBuilder( new Pose2d( 12, -36, Math.toRadians(90.00)))
                 .strafeTo(new Vector2d(1000, -500))
                 .build();
 

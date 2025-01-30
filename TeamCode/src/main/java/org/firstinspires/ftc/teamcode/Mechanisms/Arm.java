@@ -37,6 +37,9 @@ public class Arm {
         } else if (gamepad.right_bumper) {
             moveToGrab();
         }
+        else if (gamepad.left_stick_button) {
+            moveToSafety();
+        }
 
         // Update motor power with PID
         updateArm();
@@ -195,6 +198,9 @@ public class Arm {
     public void moveToPut() {
         targetArm = Constants.ARM_PUT_POSITION;
         block = true;
+    }
+    public void moveToSafety() {
+        targetArm = Constants.ARM_GRAB_POSITION_SAFETY;
     }
 
     public int currentPos;

@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -26,7 +27,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
-@Autonomous(name = "Basket Auto", group = "Autonomous")
+                                                                                                @Autonomous(name = "Basket Auto", group = "Autonomous")
 public class LeftAuto extends LinearOpMode {
     public static boolean startedTransition = false;
     public static class AutoArm {
@@ -270,7 +271,7 @@ public class LeftAuto extends LinearOpMode {
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION;
+                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
                 updateElevatorPosition();
                 return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
                         Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
@@ -446,12 +447,12 @@ public class LeftAuto extends LinearOpMode {
 
         Action firstTake = drive.actionBuilder(new Pose2d(-65, -62, Math.toRadians(45.00)))
                 .waitSeconds(1)
-                .splineToLinearHeading(new Pose2d(-55.02, -32.7, Math.toRadians(90.00)), Math.toRadians(90.00))
+                .splineToLinearHeading(new Pose2d(-49, -60, Math.toRadians(90)), Math.toRadians(90))
+                .strafeTo(new Vector2d(-49, -32.7))
                 .build();
 
-        Action Park = drive.actionBuilder(new Pose2d(-55.02, -33.28, Math.toRadians(45.00)))
-                .splineToLinearHeading(new Pose2d(-50, -27, Math.toRadians(45.00)), Math.toRadians(45.00))
-                .waitSeconds(1) // BRO I DIED BUT YES DO THIS.
+        Action Park = drive.actionBuilder(new Pose2d(-49, -32.7, Math.toRadians(90)))
+                .strafeTo(new Vector2d(-32, -12))
                 .build();
 
         waitForStart();
