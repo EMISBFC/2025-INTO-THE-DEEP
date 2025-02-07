@@ -2,21 +2,26 @@ package pedroPathing.constants;
 
 import com.pedropathing.localization.*;
 import com.pedropathing.localization.constants.*;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
+
+import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 
 public class LConstants {
     static {
-        ThreeWheelConstants.forwardTicksToInches = .001989436789;
-        ThreeWheelConstants.strafeTicksToInches = .001989436789;
-        ThreeWheelConstants.turnTicksToInches = .001989436789;
-        ThreeWheelConstants.leftY = 1;
-        ThreeWheelConstants.rightY = -1;
-        ThreeWheelConstants.strafeX = -2.5;
-        ThreeWheelConstants.leftEncoder_HardwareMapName = "leftFront";
-        ThreeWheelConstants.rightEncoder_HardwareMapName = "rightRear";
-        ThreeWheelConstants.strafeEncoder_HardwareMapName = "rightFront";
-        ThreeWheelConstants.leftEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.rightEncoderDirection = Encoder.REVERSE;
-        ThreeWheelConstants.strafeEncoderDirection = Encoder.FORWARD;
+        ThreeWheelIMUConstants.forwardTicksToInches = 0.002938849934989059;
+        ThreeWheelIMUConstants.strafeTicksToInches = 0.002956112709665143;
+        ThreeWheelIMUConstants.turnTicksToInches = 0.0019815495361425726;
+        ThreeWheelIMUConstants.leftY = 6.7;
+        ThreeWheelIMUConstants.rightY = -6.7;
+        ThreeWheelIMUConstants.strafeX = -6.3;
+        ThreeWheelIMUConstants.leftEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELFRONTLEFT;
+        ThreeWheelIMUConstants.rightEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELBACKRIGHT;
+        ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELFRONTRIGHT;
+        ThreeWheelIMUConstants.leftEncoderDirection = Encoder.REVERSE;
+        ThreeWheelIMUConstants.rightEncoderDirection = Encoder.FORWARD;
+        ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.REVERSE;
+        ThreeWheelIMUConstants.IMU_HardwareMapName = "imu";
+        ThreeWheelIMUConstants.IMU_Orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD, RevHubOrientationOnRobot.UsbFacingDirection.RIGHT);
     }
 }
 
