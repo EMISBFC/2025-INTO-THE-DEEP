@@ -96,7 +96,23 @@ public class SpecimenAuto extends OpMode {
                 break;
         }
     }
+    Thread armThread = new Thread(() -> {
+            arm.updateArm();
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+    });
 
+    Thread elevatorThread = new Thread(() -> {
+            elevator.updateElevator();
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+    });
     @Override
     public void init() {
         highGripper = new HighGripper(hardwareMap);
@@ -109,8 +125,6 @@ public class SpecimenAuto extends OpMode {
         // (Optionally, set your custom constants before initializing the follower)
         // Constants.setConstants(FConstants.class, LConstants.class);
         Constants.setConstants(FConstants.class, LConstants.class);
-        elevator.updateElevator();
-        arm.updateArm();
         // Initialize the follower and set starting pose
         follower = new Follower(hardwareMap);
         follower.setStartingPose(beginPose);
@@ -133,11 +147,15 @@ public class SpecimenAuto extends OpMode {
         opmodeTimer.resetTimer();
         setPathState(0);
     }
-
+    boolean start = true;
     @Override
     public void loop() {
-        arm.updateArm();
-        elevator.updateElevator();
+        if (start){
+            armThread.start();
+            elevatorThread.start();
+            start = false;
+        }
+
         // Update path following and state machine
         follower.update();
         autonomousPathUpdate();
@@ -156,6 +174,7 @@ public class SpecimenAuto extends OpMode {
 
     @Override
     public void stop() {
-
+        armThread.interrupt();
+        elevatorThread.interrupt();
     }
 }
