@@ -14,9 +14,9 @@ public class LConstants {
         ThreeWheelIMUConstants.leftY = 6.7;
         ThreeWheelIMUConstants.rightY = -6.7;
         ThreeWheelIMUConstants.strafeX = -6.3;
-        ThreeWheelIMUConstants.leftEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELFRONTLEFT;
-        ThreeWheelIMUConstants.rightEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELBACKRIGHT;
-        ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELFRONTRIGHT;
+        ThreeWheelIMUConstants.leftEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELBACKLEFT;
+        ThreeWheelIMUConstants.rightEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELFRONTRIGHT;
+        ThreeWheelIMUConstants.strafeEncoder_HardwareMapName = ConstantNamesHardwaremap.WHEELBACKRIGHT;
         ThreeWheelIMUConstants.leftEncoderDirection = Encoder.REVERSE;
         ThreeWheelIMUConstants.rightEncoderDirection = Encoder.FORWARD;
         ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.REVERSE;

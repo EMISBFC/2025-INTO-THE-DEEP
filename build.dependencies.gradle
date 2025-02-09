@@ -19,7 +19,7 @@ dependencies {
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.11.4'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    implementation 'com.pedropathing:pedro:1.0.7'
+    implementation 'com.pedropathing:beta:1.0.8-beta2'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.16'
 }
 
