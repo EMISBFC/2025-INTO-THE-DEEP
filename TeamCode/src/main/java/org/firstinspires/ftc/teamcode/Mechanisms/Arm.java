@@ -205,7 +205,7 @@ public class Arm {
 
     public int currentPos;
 
-    public void updateArm() {
+    private void updateArm() {
         currentPos = arm.getCurrentPosition();
         double pid = controller.calculate(currentPos, targetArm);
         double ff = Math.cos(Math.toRadians(currentPos / Constants.TICKS_IN_DEG)) * Constants.armF;
