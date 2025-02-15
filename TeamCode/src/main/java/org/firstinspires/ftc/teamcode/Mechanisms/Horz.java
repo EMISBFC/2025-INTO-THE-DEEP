@@ -27,6 +27,7 @@ public class Horz{
         horz.setDirection(DcMotorSimple.Direction.REVERSE);
         limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH  );
     }
+
     public void handleHorz(Gamepad gamepad) {
         if (!limit_switch.isPressed()) {
             zero_position = horz.getCurrentPosition(); // Set the zero position when switch is pressed

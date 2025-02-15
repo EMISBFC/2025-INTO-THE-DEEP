@@ -102,7 +102,7 @@ public class RightAuto extends LinearOpMode {
         private final PIDController pidController;
 
         private int targetPosition;
-        public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
+        public final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
 
         public AutoElevator(HardwareMap hardwareMap) {
             // Initialize motors
@@ -150,6 +150,17 @@ public class RightAuto extends LinearOpMode {
             targetPosition = position;
         }
 
+        public class ToTop implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION;
+                updateElevatorPosition();
+                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
+                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
+            }
+        }
+
+
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -160,6 +171,9 @@ public class RightAuto extends LinearOpMode {
             }
         }
 
+        public Action toTop() {
+            return new ToTop();
+        }
         public Action toBottom() {
             return new ToBottom();
         }
@@ -208,7 +222,6 @@ public class RightAuto extends LinearOpMode {
             return isOpen;
         }
     }
-    Pose2d beginPose = new Pose2d(4, -65, Math.toRadians(90.00));
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -259,12 +272,7 @@ public class RightAuto extends LinearOpMode {
                 .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart1().position, BlueSpecimenCoordinates.getStart().heading)
 
                 .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart2().position, BlueSpecimenCoordinates.getStart().heading)
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd2().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart2().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart3().position, BlueSpecimenCoordinates.getStart().heading)
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd3().position, BlueSpecimenCoordinates.getStart().heading).build();
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd2().position, BlueSpecimenCoordinates.getStart().heading).build();
 
         Action collectSecond = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getMoveSpecimenEnd3())
                 .setTangent(BlueSpecimenCoordinates.getStart().heading)

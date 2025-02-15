@@ -8,18 +8,18 @@ public class BlueSpecimenCoordinates {
     private static final double score1X = 5;
     private static final double score2X = 0;
     private static final double score3X = -4;
-    private static final double score4X = -8;
-    private static final double scoreY = 27;
+    private static final double score4X = -7;
+    private static final double scoreY = 28;
     private static final double backUpY = 40;
     private static final double midWayMoveSpecimensY = 65;
-    private static final double moveSpecimensStart0X = -36;
+    private static final double moveSpecimensStart0X = -38;
     private static final double moveSpecimensStartY = 13;
     private static final double moveSpecimensEndY = 57;
     private static final double specimen1X = -45.5;
-    private static final double specimen2X = -57;
+    private static final double specimen2X = -56;
     private static final double specimen3X = -63.5;
-    private static final double wallFirstY = 63;
-    private static final double wallY = 68;
+    private static final double wallFirstY = 62;
+    private static final double wallY = 65;
     private static final double intakeX = -38;
     private static final double parkX = -60;
 
@@ -42,8 +42,8 @@ public class BlueSpecimenCoordinates {
     private static final Pose2d moveSpecimenStart3 = new Pose2d(specimen3X, moveSpecimensStartY, startPoseHeading);
 
     private static final Pose2d moveSpecimenEnd1 = new Pose2d(specimen1X, moveSpecimensEndY, startPoseHeading);
-    private static final Pose2d moveSpecimenEnd2 = new Pose2d(specimen2X, moveSpecimensEndY, startPoseHeading);
-    private static final Pose2d moveSpecimenEnd3 = new Pose2d(specimen3X, moveSpecimensEndY-10, startPoseHeading);
+    private static final Pose2d moveSpecimenEnd2 = new Pose2d(specimen2X, moveSpecimensEndY-10, startPoseHeading);
+    private static final Pose2d moveSpecimenEnd3 = new Pose2d(specimen3X, moveSpecimensEndY, startPoseHeading);
 
     private static final Pose2d intakeOne = new Pose2d(intakeX, wallFirstY, startPoseHeading);
     private static final Pose2d intake = new Pose2d(intakeX, wallY, startPoseHeading);

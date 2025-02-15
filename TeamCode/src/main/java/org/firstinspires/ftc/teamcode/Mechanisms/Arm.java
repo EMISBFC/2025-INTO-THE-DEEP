@@ -22,7 +22,7 @@ public class Arm {
 
     public Arm(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
-//      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -205,7 +205,10 @@ public class Arm {
 
     public int currentPos;
 
-    private void updateArm() {
+    public int getCurrentPos(){
+        return arm.getCurrentPosition();
+    }
+    public void updateArm() {
         currentPos = arm.getCurrentPosition();
         double pid = controller.calculate(currentPos, targetArm);
         double ff = Math.cos(Math.toRadians(currentPos / Constants.TICKS_IN_DEG)) * Constants.armF;
