@@ -19,7 +19,7 @@ public class BlueSpecimenCoordinates {
     private static final double specimen2X = -56;
     private static final double specimen3X = -63.5;
     private static final double wallFirstY = 62;
-    private static final double wallY = 65;
+    private static final double wallY = 64.5;
     private static final double intakeX = -38;
     private static final double parkX = -60;
 

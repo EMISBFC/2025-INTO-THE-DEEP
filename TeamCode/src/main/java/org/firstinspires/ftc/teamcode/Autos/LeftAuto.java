@@ -419,7 +419,7 @@ public class LeftAuto extends LinearOpMode {
                 arm.toPut(),
                 new SleepAction(0.5),
                 highGripper.openGripper(),
-                new SleepAction(0.3),
+                new SleepAction(0.5),
                 arm.toTransition(),
                 new SleepAction(0.2),
 
@@ -458,7 +458,7 @@ public class LeftAuto extends LinearOpMode {
                 arm.toPut(),
                 new SleepAction(0.5),
                 highGripper.openGripper(),
-                new SleepAction(0.3),
+                new SleepAction(0.5),
                 arm.toTransition(),
                 new SleepAction(0.2),
 

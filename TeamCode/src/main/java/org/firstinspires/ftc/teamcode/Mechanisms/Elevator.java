@@ -29,7 +29,7 @@ public class Elevator {
 
         // Reset and set motor modes
         //leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
 
         leftElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -52,9 +52,10 @@ public class Elevator {
 
     public void handleElevator(Gamepad gamepad) {
         // Check for inputs to transition between positions
-        if (gamepad.dpad_down && !block) {
+        if (gamepad.dpad_down) {
+            Arm.targetArm = Constants.ARM_TRANSITION_POSITION;
             moveToBottom();
-        } else if (gamepad.dpad_left && !block) {
+        } else if (gamepad.dpad_left) {
             moveToMiddle();
         } else if (gamepad.dpad_up) {
             moveToTop();

@@ -44,9 +44,12 @@ public class Horz{
         clicked = limit_switch.isPressed();
 
 
-        if (motorPower > 0 && currentPos < zero_position+Constants.MAX_HORZ_POS) { //  && currentPos >= zero_position
-            horz.setPower(motorPower);
-        } else if (motorPower < 0) {
+        if (motorPower > 0 && limit_switch.isPressed()) { //  && currentPos >= zero_position
+            horz.setPower(motorPower );
+        }else if (motorPower > 0 && currentPos < zero_position+Constants.MAX_HORZ_POS + 400) {
+            horz.setPower(0.1);
+        }
+        else if (motorPower < 0 && currentPos > zero_position+Constants.MAX_HORZ_POS) {
             horz.setPower(motorPower);
         } else {
             horz.setPower(0);

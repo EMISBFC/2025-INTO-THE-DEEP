@@ -40,7 +40,9 @@ public class TeleOpRight extends OpMode {
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
+        Constants.ELEVATOR_BOTTOM_POSITION = 90;
         elevator = new Elevator(hardwareMap);
+        elevator.moveToBottom();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 //        Constants.ELEVATOR_BOTTOM_POSITION = 0; // what the fuck why the fuck huh how does this result in 160 what in fuck holy shit what -ofek
     }

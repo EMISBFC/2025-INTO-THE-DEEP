@@ -5,13 +5,13 @@ import com.acmerobotics.roadrunner.Pose2d;
 public class BlueSampleCoordinates {
     private static final double startX = 40.5;
     private static final double startY = 63.75;
-    private static final double scoreX = 58;
-    private static final double scoreY = 56;
+    private static final double scoreX = 60;
+    private static final double scoreY = 56.5;
     private static final double intake2X = 49;
-    private static final double intake2Y = 30.5;
+    private static final double intake2Y = 32;
     private static final double intake3X = 60;
     private static final double intake4X = 57;
-    private static final double intake4Y = 32;
+    private static final double intake4Y = 34;
     private static final double park1X = 36;
     private static final double park2X = 26;
     private static final double parkY = 10;
@@ -26,7 +26,7 @@ public class BlueSampleCoordinates {
     private static final Pose2d start = new Pose2d(startX, startY, startPoseHeading);
     private static final Pose2d score = new Pose2d(scoreX, scoreY, scorePoseHeading);
     private static final Pose2d intake2 = new Pose2d(intake2X, intake2Y, intake2PoseHeading);
-    private static final Pose2d intake3 = new Pose2d(intake3X, intake2Y+2, intake2PoseHeading);
+    private static final Pose2d intake3 = new Pose2d(intake3X, intake2Y, intake2PoseHeading);
     private static final Pose2d intake4 = new Pose2d(intake4X, intake4Y, intake4PoseHeading);
     private static final Pose2d park1 = new Pose2d(park1X, parkY, parkPoseHeading);
     private static final Pose2d park2 = new Pose2d(park2X, parkY, parkPoseHeading);

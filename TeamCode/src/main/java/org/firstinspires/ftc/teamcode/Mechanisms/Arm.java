@@ -15,14 +15,13 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Arm {
 
-    public int targetArm;
+    static public int targetArm;
     public double power;
     private final PIDController controller;
     private final DcMotor arm;
 
     public Arm(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
-        arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -145,7 +144,7 @@ public class Arm {
 
             case OPEN_LOW_GRIPPER:
                 lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -166,7 +165,7 @@ public class Arm {
                 GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
                 block = true;
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
-                    transitionState = TransitionState.LOW_FINAL_CLOSE; // Transition complete
+                    transitionState = TransitionState.IDLE; // Transition complete
                 }
                 break;
             case LOW_FINAL_CLOSE:
