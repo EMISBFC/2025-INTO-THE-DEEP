@@ -125,9 +125,9 @@ public class Arm {
 
             case LOW_GRIPPER_UP:
                 GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
-                GripperSpinner.LRot.setPosition(Constants.InRotPosUp-0.075);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosUp);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
-                GripperSpinner.RRot.setPosition(Constants.InRotPosUp-0.075);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosUp);
                 if (System.currentTimeMillis() - transitionStartTime > 500) {
                     transitionState = TransitionState.CLOSE_HIGH_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
