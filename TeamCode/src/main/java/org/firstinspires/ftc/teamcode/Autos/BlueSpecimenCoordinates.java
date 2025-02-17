@@ -8,7 +8,7 @@ public class BlueSpecimenCoordinates {
     private static final double score1X = 5;
     private static final double score2X = 0;
     private static final double score3X = -4;
-    private static final double score4X = -7;
+    private static final double score4X = -8.3;
     private static final double scoreY = 28;
     private static final double backUpY = 40;
     private static final double midWayMoveSpecimensY = 65;
@@ -19,7 +19,7 @@ public class BlueSpecimenCoordinates {
     private static final double specimen2X = -56;
     private static final double specimen3X = -63.5;
     private static final double wallFirstY = 62;
-    private static final double wallY = 64.5;
+    private static final double wallY = 65;
     private static final double intakeX = -38;
     private static final double parkX = -60;
 
