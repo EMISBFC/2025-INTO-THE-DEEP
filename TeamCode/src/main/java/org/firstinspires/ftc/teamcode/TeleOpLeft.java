@@ -49,6 +49,7 @@ public class TeleOpLeft extends OpMode {
         RRot.setPosition(Constants.InRotPosMid);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
+        arm.moveToTransition();
         Constants.ELEVATOR_BOTTOM_POSITION = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
         elevator = new Elevator(hardwareMap);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());

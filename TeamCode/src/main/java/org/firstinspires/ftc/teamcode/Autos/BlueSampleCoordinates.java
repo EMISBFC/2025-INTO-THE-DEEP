@@ -12,8 +12,8 @@ public class BlueSampleCoordinates {
     private static final double intake3X = 60;
     private static final double intake4X = 57;
     private static final double intake4Y = 34;
-    private static final double park1X = 36;
-    private static final double park2X = 26;
+    private static final double park1X = 45;
+    private static final double park2X = 21;
     private static final double parkY = 10;
     private static final double startPoseHeading = Math.toRadians(-180);
     private static final double scorePoseHeading = Math.toRadians(-135);

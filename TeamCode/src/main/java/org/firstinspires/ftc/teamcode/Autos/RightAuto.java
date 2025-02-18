@@ -23,6 +23,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
 import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
 import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
@@ -303,6 +304,10 @@ public class RightAuto extends LinearOpMode {
                 .strafeToConstantHeading(BlueSpecimenCoordinates.getPark().position).build();
 
         waitForStart();
+
+
+        Chassis chassis = new Chassis(hardwareMap);
+        chassis.imu.resetYaw();
 
         highGripper.closeGripper();
 

@@ -27,6 +27,7 @@ import androidx.annotation.NonNull;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
 import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
 import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
@@ -317,6 +318,18 @@ public class LeftAuto extends LinearOpMode {
         }
     }
 
+    public class RESETGOD implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            Chassis chassis = new Chassis(hardwareMap);
+            chassis.imu.resetYaw();
+            return false;
+        }
+    }
+
+    public Action reset() {
+        return new RESETGOD();
+    }
     @Override
     public void runOpMode() throws InterruptedException {
         AutoArm arm = new AutoArm(hardwareMap);
@@ -388,10 +401,14 @@ public class LeftAuto extends LinearOpMode {
                 .splineToLinearHeading(BlueSampleCoordinates.getScore(), BlueSampleCoordinates.getIntake4HeadingChange())
                 .build();
 
-        Action park = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
+        Action prePark = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
                 .setTangent(BlueSampleCoordinates.getScoreTangent())
                 .strafeToLinearHeading(BlueSampleCoordinates.getPark1().component1(), BlueSampleCoordinates.getPark1().heading)
-                .strafeToConstantHeading(BlueSampleCoordinates.getPark2().component1())
+                .build();
+
+        Action park = ignitionSystem.actionBuilder(BlueSampleCoordinates.getPark1())
+                .setTangent(0)
+                .strafeToLinearHeading(BlueSampleCoordinates.getPark2().component1(), 135)
                 .build();
 
         Action wait = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
@@ -495,8 +512,15 @@ public class LeftAuto extends LinearOpMode {
                 arm.toTransition(),
                 new SleepAction(0.2),
                 elevator.toBottom(),
+                prePark,
+                new SleepAction(0.3),
+                reset(),
+                arm.toPut(),
+                new SleepAction(0.3),
                 park,
-                new SleepAction(1)
+                new SleepAction(0.5),
+                arm.toTransition(),
+                new SleepAction(0.5)
         ));
 
         armThread.interrupt();
