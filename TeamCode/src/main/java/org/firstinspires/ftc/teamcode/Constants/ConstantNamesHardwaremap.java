@@ -15,4 +15,6 @@ public class ConstantNamesHardwaremap {
     public static final String WHEELBACKRIGHT = "rightBack"; //CONT HUB 2
     public static final String GRIPPERSPINNERLEFT = "loRotL";
     public static final String GRIPPERSPINNERRIGHT = "loRotR";
+    public static final String GRIPPERLOWRIGHT = "inR";
+    public static final String GRIPPERLOWLEFT = "inL";
 }
