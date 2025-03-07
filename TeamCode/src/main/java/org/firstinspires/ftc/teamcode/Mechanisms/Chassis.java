@@ -12,16 +12,16 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 
 public class Chassis {
-    private Motor fl;
-    private Motor fr;
-    private Motor bl;
-    private Motor br;
+    public Motor fl;
+    public Motor fr;
+    public Motor bl;
+    public Motor br;
     public static RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
             RevHubOrientationOnRobot.LogoFacingDirection.BACKWARD;
     public static RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
             RevHubOrientationOnRobot.UsbFacingDirection.RIGHT;
     RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-    IMU imu;
+    public IMU imu;
     MecanumDrive mecanum;
     public Chassis(HardwareMap hardwareMap){
 
@@ -32,8 +32,6 @@ public class Chassis {
 //        br.motor.setDirection(DcMotorSimple.Direction.REVERSE);
         mecanum = new MecanumDrive(fl, fr, bl, br);
         imu = hardwareMap.get(IMU.class, "imu");
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-        imu.resetYaw();
     }
 
     public double getHeading() {

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 
@@ -21,10 +22,15 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
+import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
+import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
+import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
+import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
 @Autonomous(name = "Specimen", group = "Autonomous")
-public class RightAutoLevelImpossible extends LinearOpMode {
+public class RightAuto extends LinearOpMode {
     public class AutoArm {
 
         public static final int TRANSITION_POSITION = (int) (40 * Constants.TICKS_IN_DEG);
@@ -97,7 +103,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
         private final PIDController pidController;
 
         private int targetPosition;
-        public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
+        public final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
 
         public AutoElevator(HardwareMap hardwareMap) {
             // Initialize motors
@@ -145,6 +151,17 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             targetPosition = position;
         }
 
+        public class ToTop implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION;
+                updateElevatorPosition();
+                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
+                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
+            }
+        }
+
+
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
@@ -155,11 +172,13 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             }
         }
 
+        public Action toTop() {
+            return new ToTop();
+        }
         public Action toBottom() {
             return new ToBottom();
         }
     }
-
     public class AutoHighGripper {
         private final Servo highGripper;
         private boolean isOpen;
@@ -207,8 +226,7 @@ public class RightAutoLevelImpossible extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-4, -75, Math.toRadians(90.00));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
+        MecanumDrive drive = new MecanumDrive(hardwareMap,  BlueSpecimenCoordinates.getStart());
         AutoArm arm = new AutoArm(hardwareMap);
         AutoElevator elevator = new AutoElevator(hardwareMap);
         AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
@@ -237,40 +255,59 @@ public class RightAutoLevelImpossible extends LinearOpMode {
             }
         });
 
-        Action firstHang = drive.actionBuilder(beginPose)
-                .splineTo(new Vector2d(-4, -37.5), Math.toRadians(90.00))
-                .build();
+        MecanumDrive ignitionSystem = new MecanumDrive(hardwareMap, BlueSpecimenCoordinates.getStart());
 
-        Action moveSampleAndGrab = drive.actionBuilder(new Pose2d(-4, -37.5, Math.toRadians(90.00)))
-                .lineToY(-42)
-                .splineToLinearHeading(new Pose2d(42, -24, Math.toRadians(90.00)), Math.toRadians(90.00))
-                .splineToLinearHeading(new Pose2d(66, -28.5, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .lineToY(-62)
-                .lineToY(-24)
-                .splineToLinearHeading(new Pose2d(78, -30, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .splineToLinearHeading(new Pose2d(78, -60, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .splineToLinearHeading(new Pose2d(60, -59, Math.toRadians(90.00)), Math.toRadians(-90.00))
-                .strafeTo(new Vector2d(50, -72.3))
-                .build();
+        Action scorePreLoad = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getStart())
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore1().position).build();
 
-        Action secondHang = drive.actionBuilder(new Pose2d(50, -72.3, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-4, -34.5))
-                .build();
-        Action Grab = drive.actionBuilder( new Pose2d(-4, -34.5, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(50, -72))
-                .build();
-        Action thirdHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(-7, -36.5))
-                .build();
-        Action GrabAgain = drive.actionBuilder( new Pose2d(-70, -36.5, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(50, -72))
-                .build();
-        Action fourthHang = drive.actionBuilder(new Pose2d(50, -72, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(12, -36))
-                .build();
-        Action park = drive.actionBuilder( new Pose2d( 12, -36, Math.toRadians(90.00)))
-                .strafeTo(new Vector2d(1000, -500))
-                .build();
+        Action moveSpecimens = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore1())
+                .splineToConstantHeading(new Vector2d(4, 39), Math.toRadians(-90.00))
+                .setTangent(BlueSpecimenCoordinates.getMidWayMoveSpecimensTangent())
+                .splineToConstantHeading(BlueSpecimenCoordinates.getBackUp().position, BlueSpecimenCoordinates.getStart().heading)
+
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimensStart0().position, BlueSpecimenCoordinates.getStart().heading)
+
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart1().position, BlueSpecimenCoordinates.getStart().heading)
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd1().position, BlueSpecimenCoordinates.getStart().heading)
+
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart1().position, BlueSpecimenCoordinates.getStart().heading)
+
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart2().position, BlueSpecimenCoordinates.getStart().heading)
+                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd2().position, BlueSpecimenCoordinates.getStart().heading).build();
+
+        Action collectSecond = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getMoveSpecimenEnd3())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .splineToConstantHeading(BlueSpecimenCoordinates.getIntakeOne().position, BlueSpecimenCoordinates.getStart().heading).build();
+
+        Action scoreSecond = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore2().position).build();
+
+        Action collectThird = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore2())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getIntake().position).build();
+
+        Action scoreThird = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore3().position).build();
+
+        Action collectFourth = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore3())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getIntake().position).build();
+
+        Action scoreFourth = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore4().position).build();
+
+        Action park = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore4())
+                .setTangent(BlueSpecimenCoordinates.getStart().heading)
+                .strafeToConstantHeading(BlueSpecimenCoordinates.getPark().position).build();
+
+        waitForStart();
+
+
+        Chassis chassis = new Chassis(hardwareMap);
+        chassis.imu.resetYaw();
 
         highGripper.closeGripper();
 
@@ -282,26 +319,35 @@ public class RightAutoLevelImpossible extends LinearOpMode {
 
         if (opModeIsActive()) {
             Actions.runBlocking(new SequentialAction(
-                    arm.toTransition(),
-                    firstHang,
+                    new ParallelAction(
+                            arm.toTransition(),
+                            scorePreLoad
+                    ),
                     arm.toGrab(),
                     highGripper.openGripper(),
-                    moveSampleAndGrab,
+                    moveSpecimens,
+                    collectSecond,
                     highGripper.closeGripper(),
-                    arm.toTransition(),
-                    secondHang,
+                    new ParallelAction(
+                            arm.toTransition(),
+                            scoreSecond
+                    ),
                     arm.toGrab(),
                     highGripper.openGripper(),
-                    Grab,
+                    collectThird,
                     highGripper.closeGripper(),
-                    arm.toTransition(),
-                    thirdHang,
+                    new ParallelAction(
+                            arm.toTransition(),
+                            scoreThird
+                    ),
                     arm.toGrab(),
                     highGripper.openGripper(),
-                    GrabAgain,
+                    collectFourth,
                     highGripper.closeGripper(),
-                    arm.toTransition(),
-                    fourthHang,
+                    new ParallelAction(
+                            arm.toTransition(),
+                            scoreFourth
+                    ),
                     arm.toGrab(),
                     highGripper.openGripper(),
                     park

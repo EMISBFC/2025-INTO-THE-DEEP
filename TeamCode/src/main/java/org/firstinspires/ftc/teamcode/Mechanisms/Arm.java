@@ -15,14 +15,13 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class Arm {
 
-    public int targetArm;
+    static public int targetArm;
     public double power;
     private final PIDController controller;
     private final DcMotor arm;
 
     public Arm(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
-//      arm.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         arm.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         arm.setDirection(DcMotorSimple.Direction.REVERSE);
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -126,9 +125,9 @@ public class Arm {
 
             case LOW_GRIPPER_UP:
                 GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
-                GripperSpinner.LRot.setPosition(Constants.InRotPosUp-0.075);
+                GripperSpinner.LRot.setPosition(Constants.InRotPosUp);
                 GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
-                GripperSpinner.RRot.setPosition(Constants.InRotPosUp-0.075);
+                GripperSpinner.RRot.setPosition(Constants.InRotPosUp);
                 if (System.currentTimeMillis() - transitionStartTime > 500) {
                     transitionState = TransitionState.CLOSE_HIGH_GRIPPER;
                     transitionStartTime = System.currentTimeMillis();
@@ -145,7 +144,7 @@ public class Arm {
 
             case OPEN_LOW_GRIPPER:
                 lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 300) {
+                if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -166,7 +165,7 @@ public class Arm {
                 GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
                 block = true;
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
-                    transitionState = TransitionState.LOW_FINAL_CLOSE; // Transition complete
+                    transitionState = TransitionState.IDLE; // Transition complete
                 }
                 break;
             case LOW_FINAL_CLOSE:
@@ -205,7 +204,10 @@ public class Arm {
 
     public int currentPos;
 
-    private void updateArm() {
+    public int getCurrentPos(){
+        return arm.getCurrentPosition();
+    }
+    public void updateArm() {
         currentPos = arm.getCurrentPosition();
         double pid = controller.calculate(currentPos, targetArm);
         double ff = Math.cos(Math.toRadians(currentPos / Constants.TICKS_IN_DEG)) * Constants.armF;

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_BOTTOM_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_TOP_POSITION;
+
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,8 +28,8 @@ public class Elevator {
         rightElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORRIGHT);
 
         // Reset and set motor modes
-//        leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER) ;
 
         leftElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rightElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -36,15 +39,23 @@ public class Elevator {
 
         // Initialize PID controller
         controller = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
-        targetLeft = Constants.ELEVATOR_BOTTOM_POSITION; // Default to bottom position
-        targetRight = Constants.ELEVATOR_BOTTOM_POSITION; // Default to bottom position
+        targetLeft = ELEVATOR_BOTTOM_POSITION; // Default to bottom position
+        targetRight = ELEVATOR_BOTTOM_POSITION; // Default to bottom position
+    }
+    public int getCurrentPosLeft(){
+        return leftElevatorMotor.getCurrentPosition();
+    }
+
+    public int getCurrentPosRight(){
+        return rightElevatorMotor.getCurrentPosition();
     }
 
     public void handleElevator(Gamepad gamepad) {
         // Check for inputs to transition between positions
-        if (gamepad.dpad_down && !block) {
+        if (gamepad.dpad_down) {
+            Arm.targetArm = Constants.ARM_TRANSITION_POSITION;
             moveToBottom();
-        } else if (gamepad.dpad_left && !block) {
+        } else if (gamepad.dpad_left) {
             moveToMiddle();
         } else if (gamepad.dpad_up) {
             moveToTop();
@@ -53,9 +64,10 @@ public class Elevator {
         updateElevator();
     }
 
-    public void moveToBottom() {
-        targetRight = Constants.ELEVATOR_BOTTOM_POSITION;
-        targetLeft = Constants.ELEVATOR_BOTTOM_POSITION;
+    public int moveToBottom() {
+        targetRight = ELEVATOR_BOTTOM_POSITION;
+        targetLeft = ELEVATOR_BOTTOM_POSITION;
+        return ELEVATOR_BOTTOM_POSITION;
     }
 
     public void moveToMiddle() {
@@ -63,9 +75,10 @@ public class Elevator {
         targetLeft = Constants.ELEVATOR_MIDDLE_POSITION + 80;
     }
 
-    public void moveToTop() {
-        targetRight = Constants.ELEVATOR_TOP_POSITION;
-        targetLeft = Constants.ELEVATOR_TOP_POSITION + 175;
+    public int moveToTop() {
+        targetRight = ELEVATOR_TOP_POSITION;
+        targetLeft = ELEVATOR_TOP_POSITION + 175;
+        return ELEVATOR_TOP_POSITION;
     }
 
     public void updateElevator() {

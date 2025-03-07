@@ -1,60 +1,56 @@
 package org.firstinspires.ftc.teamcode.Autos;
 
+
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_BOTTOM_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_TOP_POSITION;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.ParallelAction;
-import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.acmerobotics.roadrunner.Vector2d;
+
+import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import com.acmerobotics.roadrunner.ftc.Actions;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-
 import androidx.annotation.NonNull;
-
-import com.arcrobotics.ftclib.controller.PIDController;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
+import org.firstinspires.ftc.teamcode.Mechanisms.Arm;
+import org.firstinspires.ftc.teamcode.Mechanisms.Chassis;
+import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
 import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
-                                                                                                @Autonomous(name = "Basket Auto", group = "Autonomous")
+@Autonomous(name = "Basket Auto", group = "Autonomous")
 public class LeftAuto extends LinearOpMode {
-    public static boolean startedTransition = false;
-    public static class AutoArm {
+    public class AutoArm {
+        public final int TRANSITION_POSITION = Constants.ARM_TRANSITION_POSITION;
+        public final int PUT_POSITION = Constants.ARM_PUT_POSITION;
+
         private final DcMotor armMotor;
         private final PIDController pidController;
         private int targetPosition;
-
-        public enum TransitionState {
-            IDLE,
-            GRIPPER_TO_MID_FIRST,
-            OPEN_HIGH_GRIPPER,
-            ARM_TO_TRANSITION,
-            LOW_OPEN,
-            LOW_CLOSE,
-            LOW_GRIPPER_UP,
-            CLOSE_HIGH_GRIPPER,
-            OPEN_LOW_GRIPPER,
-            ARM_TO_PUT,
-            GRIPPER_TO_MID,
-            LOW_FINAL_CLOSE
-        }
 
         public AutoArm(HardwareMap hardwareMap) {
             armMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
             armMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             armMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             armMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+            armMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
             pidController = new PIDController(Constants.armP, Constants.armI, Constants.armD);
             targetPosition = 0;
         }
@@ -79,124 +75,20 @@ public class LeftAuto extends LinearOpMode {
 
         public class ToTransition implements Action {
             @Override
-            public boolean run(TelemetryPacket packet) {
-                targetPosition = Constants.ARM_TRANSITION_POSITION;
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetPosition = TRANSITION_POSITION;
                 updateArmPosition();
-                packet.put("Target Position", Constants.ARM_TRANSITION_POSITION);
-                packet.put("Current Position", armMotor.getCurrentPosition());
                 return Math.abs(armMotor.getCurrentPosition() - targetPosition) < Constants.ARMTOLERANCE;
             }
         }
+
 
         public class ToPut implements Action {
             @Override
-            public boolean run(TelemetryPacket packet) {
-                targetPosition = Constants.ARM_PUT_POSITION;
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetPosition = PUT_POSITION;
                 updateArmPosition();
-                packet.put("Target Position", Constants.ARM_PUT_POSITION);
-                packet.put("Current Position", armMotor.getCurrentPosition());
                 return Math.abs(armMotor.getCurrentPosition() - targetPosition) < Constants.ARMTOLERANCE;
-            }
-        }
-        private TransitionState transitionState = AutoArm.TransitionState.IDLE;
-        private long transitionStartTime;
-        public class HandleTransition implements Action {
-
-            @Override
-            public boolean run(TelemetryPacket packet) {
-                if (transitionState == AutoArm.TransitionState.IDLE) {
-                    transitionState = AutoArm.TransitionState.GRIPPER_TO_MID_FIRST;
-                    transitionStartTime = System.currentTimeMillis();
-                }
-
-                // State machine logic
-                switch (transitionState) {
-
-                    case GRIPPER_TO_MID_FIRST:
-                        GripperSpinner.LRot.setDirection(Servo.Direction.REVERSE);
-                        GripperSpinner.LRot.setPosition(Constants.InRotPosMid);
-                        GripperSpinner.RRot.setDirection(Servo.Direction.FORWARD);
-                        GripperSpinner.RRot.setPosition(Constants.InRotPosMid);
-                        if (System.currentTimeMillis() - transitionStartTime > 400) {
-                            transitionState = AutoArm.TransitionState.OPEN_HIGH_GRIPPER;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-                    case OPEN_HIGH_GRIPPER:
-                        HighGripper.OpenGripper();
-                        if (System.currentTimeMillis() - transitionStartTime > 0) {
-                            transitionState = AutoArm.TransitionState.LOW_OPEN;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-                    case LOW_OPEN:
-                        lowGripper.OpenLowGripper();
-                        if (System.currentTimeMillis() - transitionStartTime > 100) {
-                            transitionState = AutoArm.TransitionState.LOW_CLOSE;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-                    case LOW_CLOSE:
-                        lowGripper.CloseLowGripper();
-                        if (System.currentTimeMillis() - transitionStartTime > 70) {
-                            transitionState = AutoArm.TransitionState.LOW_GRIPPER_UP;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-
-                    case LOW_GRIPPER_UP:
-                        GripperSpinner.Up();
-                        if (System.currentTimeMillis() - transitionStartTime > 500) {
-                            transitionState = AutoArm.TransitionState.CLOSE_HIGH_GRIPPER;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-
-                    case CLOSE_HIGH_GRIPPER:
-                        HighGripper.CloseGripper();
-                        if (System.currentTimeMillis() - transitionStartTime > 450) {
-                            transitionState = AutoArm.TransitionState.OPEN_LOW_GRIPPER;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-
-                    case OPEN_LOW_GRIPPER:
-                        lowGripper.OpenLowGripper();
-                        if (System.currentTimeMillis() - transitionStartTime > 300) {
-                            transitionState = AutoArm.TransitionState.ARM_TO_PUT;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-
-                    case ARM_TO_PUT:
-                        toPut();
-                        if (System.currentTimeMillis() - transitionStartTime > 30) {
-                            transitionState = AutoArm.TransitionState.GRIPPER_TO_MID;
-                            transitionStartTime = System.currentTimeMillis();
-                        }
-                        break;
-
-                    case GRIPPER_TO_MID:
-                        GripperSpinner.Mid();
-                        if (System.currentTimeMillis() - transitionStartTime > 0) {
-                            transitionState = AutoArm.TransitionState.LOW_FINAL_CLOSE; // Transition complete
-                        }
-                        break;
-                    case LOW_FINAL_CLOSE:
-                        lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-                        if (System.currentTimeMillis() - transitionStartTime > 0) {
-                            transitionState = AutoArm.TransitionState.IDLE;
-                            transitionStartTime = System.currentTimeMillis();
-                            startedTransition = false;
-                        }
-                        break;
-
-                    case IDLE:
-                        // Do nothing, waiting for the next command
-                        break;
-
-                }
-                return false;
             }
         }
 
@@ -204,51 +96,52 @@ public class LeftAuto extends LinearOpMode {
             return new ToTransition();
         }
 
-        public Action toPut() {
-            return new ToPut();
-        }
-
-        public Action handleTransition() {
-            startedTransition = true;
-            return new HandleTransition();
-        }
+        public Action toPut() {return new ToPut();}
     }
     public class AutoElevator {
+        public final int ELEVATOR_TOLERANCE = 20; // Adjust based on acceptable range
 
-        private final DcMotor leftElevatorMotor;
-        private final DcMotor rightElevatorMotor;
         private final PIDController pidController;
-
-        private int targetPosition;
-        public static final int ELEVATOR_TOLERANCE = 2; // Adjust based on acceptable range
+        private final DcMotor leftElevatorMotor, rightElevatorMotor;
+        private int targetLeft, targetRight;
 
         public AutoElevator(HardwareMap hardwareMap) {
-            // Initialize motors
+            // Initialize the motors
             leftElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORLEFT);
             rightElevatorMotor = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ELEVATORRIGHT);
 
+            // Reset and set motor modes
             leftElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             rightElevatorMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
             leftElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             rightElevatorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+            // Reverse one motor to ensure they move in sync
             leftElevatorMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-            leftElevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-            rightElevatorMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-            // Initialize PID Controller
+            // Initialize PID controller
             pidController = new PIDController(Constants.elevatorP, Constants.elevatorI, Constants.elevatorD);
+            targetLeft = ELEVATOR_BOTTOM_POSITION_LEFT; // Default to bottom position
+            targetRight = ELEVATOR_BOTTOM_POSITION_LEFT; // Default to bottom position
+        }
 
-            targetPosition = Constants.ELEVATOR_BOTTOM_POSITION; // Default to the bottom position
+        public class ToTop implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                targetRight = ELEVATOR_TOP_POSITION;
+                targetLeft = ELEVATOR_TOP_POSITION + 175;
+                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetLeft) < ELEVATOR_TOLERANCE &&
+                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetRight) < ELEVATOR_TOLERANCE;
+            }
         }
 
         private void updateElevatorPosition() {
             int currentPositionLeft = leftElevatorMotor.getCurrentPosition();
             int currentPositionRight = rightElevatorMotor.getCurrentPosition();
 
-            double pidLeft = pidController.calculate(currentPositionLeft, targetPosition);
-            double pidRight = pidController.calculate(currentPositionRight, targetPosition);
+            double pidLeft = pidController.calculate(currentPositionLeft, targetLeft);
+            double pidRight = pidController.calculate(currentPositionRight, targetRight);
 
             double ffLeft = Math.cos(Math.toRadians(currentPositionLeft / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
             double ffRight = Math.cos(Math.toRadians(currentPositionRight / Constants.TICKS_IN_DEG_ELEVATOR)) * Constants.elevatorF;
@@ -259,56 +152,25 @@ public class LeftAuto extends LinearOpMode {
             leftElevatorMotor.setPower(powerLeft);
             rightElevatorMotor.setPower(powerRight);
         }
-
-        public void maintainPosition() {
-            updateElevatorPosition();
-        }
-
-        public void setTargetPosition(int position) {
-            targetPosition = position;
-        }
-
         public class ToBottom implements Action {
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
-                updateElevatorPosition();
-                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
-                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
+                targetRight = ELEVATOR_BOTTOM_POSITION_LEFT;
+                targetLeft = ELEVATOR_BOTTOM_POSITION_LEFT;
+                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetLeft) < ELEVATOR_TOLERANCE &&
+                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetRight) < ELEVATOR_TOLERANCE;
             }
         }
-        public class ToMiddle implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = Constants.ELEVATOR_MIDDLE_POSITION;
-                updateElevatorPosition();
-                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
-                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
-            }
+        public void maintainPosition() {
+            updateElevatorPosition();
         }
-        public class ToTop implements Action {
-            @Override
-            public boolean run(@NonNull TelemetryPacket packet) {
-                targetPosition = Constants.ELEVATOR_TOP_POSITION;
-                updateElevatorPosition();
-                return Math.abs(leftElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE &&
-                        Math.abs(rightElevatorMotor.getCurrentPosition() - targetPosition) < ELEVATOR_TOLERANCE;
-            }
-        }
-
         public Action toBottom() {
-            return new ToBottom();
+            return new AutoElevator.ToBottom();
         }
-
-        public Action toMiddle() {
-            return new ToMiddle();
-        }
-
         public Action toTop() {
-            return new ToTop();
+            return new AutoElevator.ToTop();
         }
     }
-
     public class AutoHighGripper {
         private final Servo highGripper;
         private boolean isOpen;
@@ -323,7 +185,6 @@ public class LeftAuto extends LinearOpMode {
             public boolean run(@NonNull TelemetryPacket packet) {
                 highGripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
                 isOpen = true;
-
                 return false;
             }
         }
@@ -343,81 +204,149 @@ public class LeftAuto extends LinearOpMode {
         }
 
         public Action openGripper() {
-            return new OpenHighGripper();
+            return new AutoHighGripper.OpenHighGripper();
         }
 
         public Action closeGripper() {
-            return new CloseHighGripper();
+            return new AutoHighGripper.CloseHighGripper();
         }
 
         public boolean isGripperOpen() {
             return isOpen;
         }
     }
-
-    public static class AutoLowGripper {
-        private final Servo lowGripper;
-
+    public class AutoLowGripper{
+        public Servo low_gripper;
         public AutoLowGripper(HardwareMap hardwareMap) {
-            lowGripper = hardwareMap.get(Servo.class, ConstantNamesHardwaremap.LOWGRIPPER);
+            low_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPER);
+            low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
         }
 
-        public class OpenLowGripper implements Action {
+        public class OpenLowGripper implements Action{
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                org.firstinspires.ftc.teamcode.Mechanisms.lowGripper.OpenLowGripper();
+                low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
                 return false;
             }
         }
 
-        public class CloseLowGripper implements Action {
+        public class CloseLowGripper implements Action{
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                org.firstinspires.ftc.teamcode.Mechanisms.lowGripper.CloseLowGripper();
+                low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+                return false;
+            }
+        }
+
+        public class OpenABit implements Action{
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                low_gripper.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
                 return false;
             }
         }
 
         public Action openGripper() {
-            return new OpenLowGripper();
+            return new AutoLowGripper.OpenLowGripper();
+        }
+        public Action openABit() {
+            return new AutoLowGripper.OpenABit();
         }
 
         public Action closeGripper() {
-            return new CloseLowGripper();
+            return new AutoLowGripper.CloseLowGripper();
+        }
+    }
+    public class AutoGripperSpinner {
+        public Servo LRot;
+        public Servo RRot;
+
+        public AutoGripperSpinner(HardwareMap hardwareMap){
+            LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
+            RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
+            LRot.setDirection(Servo.Direction.REVERSE);
+            //LRot.setPosition(Constants.InRotPosDown);
+            RRot.setDirection(Servo.Direction.FORWARD);
+            //RRot.setPosition(Constants.InRotPosDown);
+        }
+        public class Down implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                LRot.setDirection(Servo.Direction.REVERSE);
+                LRot.setPosition(Constants.InRotPosDown);
+                RRot.setDirection(Servo.Direction.FORWARD);
+                RRot.setPosition(Constants.InRotPosDown);
+                return false;
+            }
         }
 
+        public class Up implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+
+                LRot.setDirection(Servo.Direction.REVERSE);
+                LRot.setPosition(Constants.InRotPosUp);
+                RRot.setDirection(Servo.Direction.FORWARD);
+                RRot.setPosition(Constants.InRotPosUp);
+                return false;
+            }
+        }
+
+        public class Mid implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                LRot.setDirection(Servo.Direction.REVERSE);
+                LRot.setPosition(Constants.InRotPosMid);
+                RRot.setDirection(Servo.Direction.FORWARD);
+                RRot.setPosition(Constants.InRotPosMid);
+                return false;
+            }
+
+        }
+
+        public Action down() {
+            return new AutoGripperSpinner.Down();
+        }
+
+        public Action mid() {
+            return new AutoGripperSpinner.Mid();
+        }
+
+        public Action up() {
+            return new AutoGripperSpinner.Up();
+        }
     }
 
+    public class RESETGOD implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            Chassis chassis = new Chassis(hardwareMap);
+            chassis.imu.resetYaw();
+            return false;
+        }
+    }
 
-
+    public Action reset() {
+        return new RESETGOD();
+    }
     @Override
     public void runOpMode() throws InterruptedException {
-        GripperSpinner gripperSpinner = new GripperSpinner(hardwareMap);
-        Pose2d beginPose = new Pose2d(-39.54, -66.80, Math.toRadians(90.00));
-        MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
         AutoArm arm = new AutoArm(hardwareMap);
         AutoElevator elevator = new AutoElevator(hardwareMap);
         AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
         AutoLowGripper lowGripper = new AutoLowGripper(hardwareMap);
-        org.firstinspires.ftc.teamcode.Mechanisms.lowGripper lowGripper1 = new lowGripper(hardwareMap);
-        highGripper.closeGripper();
-        org.firstinspires.ftc.teamcode.Mechanisms.lowGripper.OpenLowGripper();
-        HighGripper highGripper1 = new HighGripper(hardwareMap);
+        AutoGripperSpinner gripperSpinner = new AutoGripperSpinner(hardwareMap);
+
         Thread armThread = new Thread(() -> {
             while (!isStopRequested()) {
-                arm.maintainPosition();
+                arm.updateArmPosition();
                 try {
                     Thread.sleep(20);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
                 }
-            }
-        });
-
-        Thread transitionThread = new Thread(() -> {
-            while (startedTransition) {
-                arm.handleTransition();
             }
         });
 
@@ -433,57 +362,167 @@ public class LeftAuto extends LinearOpMode {
             }
         });
 
-        Action firstPut = drive.actionBuilder(beginPose)
-                .splineToLinearHeading(new Pose2d(-65, -62, Math.toRadians(45.00)), Math.toRadians(45.00))
-                .waitSeconds(0.2) // BRO I DIED BUT YES DO THIS.
+        MecanumDrive ignitionSystem = new MecanumDrive(hardwareMap, BlueSampleCoordinates.getStart());
+
+        Action scorePreLoad = ignitionSystem.actionBuilder(BlueSampleCoordinates.getStart())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getScore(), BlueSampleCoordinates.getIntake2HeadingChange())
                 .build();
 
-        Action wait = drive.actionBuilder(beginPose)
-                .waitSeconds(1)
+        Action intake2 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getIntake2(), BlueSampleCoordinates.getIntake2HeadingChange())
                 .build();
-        Action waitThree = drive.actionBuilder(beginPose)
+
+        Action score2 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getIntake2())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getScore(), BlueSampleCoordinates.getIntake2HeadingChange())
+                .build();
+
+        Action intake3 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getIntake3(), BlueSampleCoordinates.getIntake2HeadingChange())
+                .build();
+
+        Action score3 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getIntake3())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getScore(), BlueSampleCoordinates.getIntake2HeadingChange())
+                .build();
+
+        Action intake4 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getIntake4(), BlueSampleCoordinates.getIntake4HeadingChange())
+                .build();
+
+        Action score4 = ignitionSystem.actionBuilder(BlueSampleCoordinates.getIntake4())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .splineToLinearHeading(BlueSampleCoordinates.getScore(), BlueSampleCoordinates.getIntake4HeadingChange())
+                .build();
+
+        Action prePark = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
+                .setTangent(BlueSampleCoordinates.getScoreTangent())
+                .strafeToLinearHeading(BlueSampleCoordinates.getPark1().component1(), BlueSampleCoordinates.getPark1().heading)
+                .build();
+
+        Action park = ignitionSystem.actionBuilder(BlueSampleCoordinates.getPark1())
+                .setTangent(0)
+                .strafeToLinearHeading(BlueSampleCoordinates.getPark2().component1(), 135)
+                .build();
+
+        Action wait = ignitionSystem.actionBuilder(BlueSampleCoordinates.getScore())
                 .waitSeconds(4)
                 .build();
 
-        Action firstTake = drive.actionBuilder(new Pose2d(-65, -62, Math.toRadians(45.00)))
-                .waitSeconds(1)
-                .splineToLinearHeading(new Pose2d(-49, -60, Math.toRadians(90)), Math.toRadians(90))
-                .strafeTo(new Vector2d(-49, -32.7))
-                .build();
-
-        Action Park = drive.actionBuilder(new Pose2d(-49, -32.7, Math.toRadians(90)))
-                .strafeTo(new Vector2d(-32, -12))
-                .build();
-
         waitForStart();
+
+        highGripper.closeGripper();
+        lowGripper.openGripper();
+        waitForStart();
+
         armThread.start();
+        elevatorThread.start();
 
-        if (opModeIsActive()) {
-            elevator.toBottom();
-            elevatorThread.start();
-            transitionThread.start();
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            firstPut,
-                            elevator.toTop()
-                    ),
-                    new ParallelAction(
-                            wait,
-                            arm.toPut()
-                    ),
-                    new ParallelAction(
-                            wait,
-                            highGripper.openGripper()
-                    ),
-                    firstTake,
-                    arm.toTransition(),
-                    elevator.toBottom(),
-                    lowGripper.closeGripper(),
-                    waitThree,
-                    Park
 
-            ));
-        }
+        Actions.runBlocking(new SequentialAction(
+                new ParallelAction(
+                        elevator.toTop(),
+                        scorePreLoad,
+                        lowGripper.openGripper(),
+                        gripperSpinner.down(),
+                        new SleepAction(0.4)
+                ),
+                arm.toPut(),
+                new SleepAction(0.5),
+                highGripper.openGripper(),
+                new SleepAction(0.7),
+                arm.toTransition(),
+                new SleepAction(0.2),
+
+                new ParallelAction(
+                        elevator.toBottom(),
+                        intake2
+                ),
+
+
+                new SleepAction(0.4),
+                lowGripper.closeGripper(),
+                new SleepAction(0.3),
+                gripperSpinner.mid(),
+                new SleepAction(0.3),
+                lowGripper.openABit(),
+                new SleepAction(0.3),
+                lowGripper.closeGripper(),
+                new SleepAction(0.3),
+                gripperSpinner.up(),
+                new SleepAction(0.3),
+                highGripper.closeGripper(),
+                lowGripper.openGripper(),
+                new SleepAction(0.3),
+                elevator.toTop(),
+                gripperSpinner.down(),
+                new SleepAction(0.3),
+
+                /////////////////////////////////
+                new ParallelAction(
+                        elevator.toTop(),
+                        score2,
+                        lowGripper.openGripper(),
+                        gripperSpinner.down(),
+                        new SleepAction(0.4)
+                ),
+                arm.toPut(),
+                new SleepAction(0.5),
+                highGripper.openGripper(),
+                new SleepAction(0.7),
+                arm.toTransition(),
+                new SleepAction(0.2),
+
+                new ParallelAction(
+                        elevator.toBottom(),
+                        intake3
+                ),
+                new SleepAction(0.4),
+                lowGripper.closeGripper(),
+                new SleepAction(0.3),
+                gripperSpinner.mid(),
+                new SleepAction(0.3),
+                lowGripper.openABit(),
+                new SleepAction(0.3),
+                lowGripper.closeGripper(),
+                new SleepAction(0.3),
+                gripperSpinner.up(),
+                new SleepAction(0.3),
+                highGripper.closeGripper(),
+                lowGripper.openGripper(),
+                new SleepAction(0.3),
+                new ParallelAction(
+                        elevator.toTop(),
+                        score3,
+                        lowGripper.openGripper(),
+                        gripperSpinner.down(),
+                        new SleepAction(0.4)
+                ),
+
+                arm.toPut(),
+                new SleepAction(0.5),
+                highGripper.openGripper(),
+                new SleepAction(0.7),
+                arm.toTransition(),
+                new SleepAction(0.2),
+                elevator.toBottom(),
+                prePark,
+                new SleepAction(0.3),
+                reset(),
+                arm.toPut(),
+                new SleepAction(0.3),
+                park,
+                new SleepAction(0.5),
+                arm.toTransition(),
+                new SleepAction(0.5)
+        ));
+
         armThread.interrupt();
         armThread.join();
     }
