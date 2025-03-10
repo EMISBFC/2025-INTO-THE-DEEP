@@ -62,6 +62,7 @@ public class TeleOpLeft extends OpMode {
         double rx = (-gamepad1.right_stick_x);
         boolean bumper = gamepad1.right_bumper;
 
+        elevator.moveToBottom();
 
         chassis.fieldCentricDrive(x, y, rx, bumper);
         low_gripper.lowGripperControl(gamepad1);
