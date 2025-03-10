@@ -13,7 +13,6 @@ import java.util.List;
 public class lowGripper {
     private Servo lowGripperR;
     private Servo lowGripperL;
-    private List<LynxModule> allHubs;
     private boolean gripperLock = false;
 
     public enum GripperState {
@@ -54,7 +53,6 @@ public class lowGripper {
             gripperLock = false;
         }
     }
-
     public void setGripperState(GripperState newState) {
         if (newState == GripperState.OPEN) {
             lowGripperR.setPosition(Constants.LOW_GRIPPER_OPENED);
@@ -65,7 +63,6 @@ public class lowGripper {
         }
         currentState = newState;
     }
-
 
     public void setPosition(GripperState state) {
         this.currentState = state;

@@ -25,7 +25,7 @@ public class Horz{
         horz.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         horz.setDirection(DcMotorSimple.Direction.REVERSE);
-        limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH  );
+        limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH);
     }
 
     public void handleHorz(Gamepad gamepad) {

@@ -16,7 +16,6 @@ public class GripperSpinner {
 
         LRot.setDirection(Servo.Direction.REVERSE);
         RRot.setDirection(Servo.Direction.FORWARD);
-
     }
 
     public void handleInput(Gamepad gamepad){

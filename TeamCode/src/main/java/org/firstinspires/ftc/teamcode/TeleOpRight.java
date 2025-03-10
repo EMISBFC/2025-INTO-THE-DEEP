@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Elevator;
 import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.Mechanisms.Horz;
+import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper;
 import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 
 
@@ -28,6 +29,7 @@ public class TeleOpRight extends OpMode {
     private HighGripper high_gripper;
     private GripperSpinner gripperSpinner;
     private Horz horz;
+    private Sweeper sweeper;
     private Arm arm;
     private Elevator elevator;
 
@@ -40,6 +42,7 @@ public class TeleOpRight extends OpMode {
         gripperSpinner = new GripperSpinner(hardwareMap);
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
+        sweeper = new Sweeper(hardwareMap);
         Constants.ELEVATOR_BOTTOM_POSITION = 90;
         elevator = new Elevator(hardwareMap);
         elevator.moveToBottom();
@@ -57,6 +60,7 @@ public class TeleOpRight extends OpMode {
         chassis.fieldCentricDrive(x, y, rx, acc);
         low_gripper.lowGripperControl(gamepad1);
         gripperSpinner.handleInput(gamepad1);
+        sweeper.handleSweeper(gamepad1);
 
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);
