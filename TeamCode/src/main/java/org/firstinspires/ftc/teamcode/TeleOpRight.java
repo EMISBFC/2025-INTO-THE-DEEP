@@ -55,8 +55,8 @@ public class TeleOpRight extends OpMode {
         double acc = gamepad1.right_trigger;
 
         chassis.fieldCentricDrive(x, y, rx, acc);
-        low_gripper.handleServo(gamepad1);
-        gripperSpinner.handleSpinnerRight(gamepad1);
+        low_gripper.lowGripperControl(gamepad1);
+        gripperSpinner.handleInput(gamepad1);
 
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);

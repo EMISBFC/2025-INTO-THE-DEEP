@@ -1,71 +1,50 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 public class GripperSpinner {
-    public static Servo LRot;
-    public static Servo RRot;
+    public static Servo LRot, RRot;
 
-    static private boolean padLock = false;
-    static private boolean isOpen = false;
-    public GripperSpinner(HardwareMap hardwareMap){
-        LRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERLEFT);
-        RRot = hardwareMap.servo.get(ConstantNamesHardwaremap.GRIPPERSPINNERRIGHT);
+    public GripperSpinner(HardwareMap hardwareMap) {
+        LRot = hardwareMap.get(Servo.class, "loRotL");
+        RRot = hardwareMap.get(Servo.class, "loRotR");
+
         LRot.setDirection(Servo.Direction.REVERSE);
-        //LRot.setPosition(Constants.InRotPosDown);
         RRot.setDirection(Servo.Direction.FORWARD);
-        //RRot.setPosition(Constants.InRotPosDown);
+
     }
 
-    public void handleSpinnerRight(Gamepad gamepad) {
-
-        if(gamepad.triangle && !padLock && isOpen) {
-            Down();
-            padLock = true;
+    public void handleInput(Gamepad gamepad){
+        if (gamepad.dpad_down) {
+            moveToDown();
+        } else if (gamepad.dpad_left) {
+            moveToMid();
+        } else if (gamepad.dpad_up) {
+            moveToUp();
         }
-        else if(gamepad.triangle && !padLock&& !isOpen) {
-            Mid();
-            padLock = true;
-        }
-        else if(!gamepad.triangle && padLock) padLock = false;
     }
 
-    public static void Down(){
-        LRot.setDirection(Servo.Direction.REVERSE);
-        LRot.setPosition(Constants.InRotPosDown);
-        RRot.setDirection(Servo.Direction.FORWARD);
-        RRot.setPosition(Constants.InRotPosDown);
-        isOpen = false;
+    public void handleInputLeft(Gamepad gamepad){
+
     }
 
-    public static void Mid(){
-        LRot.setDirection(Servo.Direction.REVERSE);
-        LRot.setPosition(Constants.InRotPosMid);
-        RRot.setDirection(Servo.Direction.FORWARD);
-        RRot.setPosition(Constants.InRotPosMid);
-        isOpen = true;
+    public void moveToDown() {
+        LRot.setPosition(Constants.GRIPPER_SPINNER_DOWN);
+        RRot.setPosition(Constants.GRIPPER_SPINNER_DOWN);
     }
 
-    public static void Up(){
-        LRot.setDirection(Servo.Direction.REVERSE);
-        LRot.setPosition(Constants.InRotPosUp);
-        RRot.setDirection(Servo.Direction.FORWARD);
-        RRot.setPosition(Constants.InRotPosUp);
+    public void moveToMid() {
+        LRot.setPosition(Constants.GRIPPER_SPINNER_MID);
+        RRot.setPosition(Constants.GRIPPER_SPINNER_MID);
     }
-    public void handleSpinnerLeft(Gamepad gamepad) {
-        if(gamepad.triangle && !padLock && isOpen) {
-           Down();
-            padLock = true;
-        }
-        else if(gamepad.triangle && !padLock&&!isOpen) {
-            Mid();
-            padLock = true;
-        }
-        else if(!gamepad.triangle && padLock) padLock = false;
+
+    public void moveToUp() {
+        LRot.setPosition(Constants.GRIPPER_SPINNER_UP);
+        RRot.setPosition(Constants.GRIPPER_SPINNER_UP);
     }
 }

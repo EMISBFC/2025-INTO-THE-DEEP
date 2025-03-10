@@ -64,8 +64,8 @@ public class TeleOpLeft extends OpMode {
 
 
         chassis.fieldCentricDrive(x, y, rx, acc);
-        low_gripper.handleServo(gamepad1);
-        gripperSpinner.handleSpinnerLeft(gamepad1);
+        low_gripper.lowGripperControl(gamepad1);
+        gripperSpinner.handleInputLeft(gamepad1);
 
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);

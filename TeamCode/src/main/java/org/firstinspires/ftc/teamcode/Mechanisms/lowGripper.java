@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -7,36 +8,72 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
+import java.util.List;
+
 public class lowGripper {
-    public static Servo low_gripper;
-    boolean padLock = false;
+    private Servo lowGripperR;
+    private Servo lowGripperL;
+    private List<LynxModule> allHubs;
+    private boolean gripperLock = false;
 
-    static private boolean isOpen = false;
+    public enum GripperState {
+        OPEN(Constants.LOW_GRIPPER_OPENED),
+        CLOSED(Constants.LOW_GRIPPER_CLOSED);
+
+        public final double position;
+        GripperState(double position) {
+            this.position = position;
+        }
+    }
+
+    private GripperState currentState = GripperState.CLOSED;
+
     public lowGripper(HardwareMap hardwareMap) {
-        low_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPER);
-        low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-        isOpen = true;
+        lowGripperR = hardwareMap.get(Servo.class, ConstantNamesHardwaremap.LOWGRIPPERRIRGHT);
+        lowGripperL = hardwareMap.get(Servo.class, ConstantNamesHardwaremap.LOWGRIPPERLEFT);
+
+        lowGripperR.setDirection(Servo.Direction.REVERSE);
+        lowGripperL.setDirection(Servo.Direction.FORWARD);
+
+        setPosition(currentState); // Initialize at default position
     }
 
-    public void handleServo(Gamepad gamepad){
-        if(gamepad.cross && !padLock && isOpen){
-            CloseLowGripper();
-            padLock = true;
+    public void toggleGripper() {
+        if (currentState == GripperState.CLOSED) {
+            setGripperState(GripperState.OPEN);
+        } else {
+            setGripperState(GripperState.CLOSED);
         }
-        else if(gamepad.cross && !padLock && !isOpen){
-            OpenLowGripper();
-            padLock = true;
+    }
+
+    public void lowGripperControl(Gamepad gamepad){
+        if (gamepad.x && !gripperLock) {
+            toggleGripper();
+            gripperLock = true;
+        } else if (!gamepad.x) {
+            gripperLock = false;
         }
-        else if(!gamepad.cross && padLock) padLock = false;
     }
 
-    public static void OpenLowGripper(){
-        low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
-        isOpen = true;
+    public void setGripperState(GripperState newState) {
+        if (newState == GripperState.OPEN) {
+            lowGripperR.setPosition(Constants.LOW_GRIPPER_OPENED);
+            lowGripperL.setPosition(Constants.LOW_GRIPPER_OPENED);
+        } else {
+            lowGripperR.setPosition(Constants.LOW_GRIPPER_CLOSED);
+            lowGripperL.setPosition(Constants.LOW_GRIPPER_CLOSED);
+        }
+        currentState = newState;
     }
 
-    public static void CloseLowGripper(){
-        low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-        isOpen = false;
+
+    public void setPosition(GripperState state) {
+        this.currentState = state;
+        lowGripperR.setPosition(state.position);
+        lowGripperL.setPosition(state.position);
+    }
+
+    public GripperState getCurrentState() {
+        return currentState;
     }
 }

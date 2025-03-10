@@ -15,4 +15,13 @@ public class Constants {
     public static final double HIGRIPPER_CLOSE_POS = 0.89, HIGRIPPER_OPEN_POS = 0.35;
     public static final double InRotPosUp = 0.145, InRotPosMid =0.55, InRotPosDown = 0.95;
     public static double elevatorP = 0.01, elevatorI = 0.0, elevatorD = 0.00, elevatorF = 0.35;
+
+    // Gripper Spinner
+    public static final double GRIPPER_SPINNER_UP = 0.9;
+    public static final double GRIPPER_SPINNER_MID = 0.55;
+    public static final double GRIPPER_SPINNER_DOWN = 0.15;
+
+    // Low Gripper
+    public static final double LOW_GRIPPER_OPENED = 0.15;
+    public static final double LOW_GRIPPER_CLOSED = 0.35;
 }
