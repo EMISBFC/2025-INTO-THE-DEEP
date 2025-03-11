@@ -60,10 +60,10 @@ public class TeleOpLeft extends OpMode {
         double y = (gamepad1.left_stick_y);
         double x = (-gamepad1.left_stick_x);
         double rx = (-gamepad1.right_stick_x);
-        double acc = gamepad1.right_trigger;
+        boolean bumper = gamepad1.right_bumper;
 
 
-        chassis.fieldCentricDrive(x, y, rx, acc);
+        chassis.fieldCentricDrive(x, y, rx, bumper);
         low_gripper.lowGripperControl(gamepad1);
         gripperSpinner.handleInputLeft(gamepad1);
 
