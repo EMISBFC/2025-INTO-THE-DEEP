@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 import java.util.List;
 
 public class lowGripper {
-    private Servo lowGripperR;
-    private Servo lowGripperL;
+    public static Servo lowGripperR;
+    public static Servo lowGripperL;
     private boolean gripperLock = false;
 
     public enum GripperState {

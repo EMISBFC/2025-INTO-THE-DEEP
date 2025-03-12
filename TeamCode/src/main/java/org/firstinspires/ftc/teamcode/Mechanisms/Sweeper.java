@@ -21,10 +21,10 @@ public class Sweeper {
         if (gamepad.triangle) {
             Sweep();
         }
-        if (gamepad.circle && !padLock && isOpen) {
-            ToggleSweeper();
-            padLock = true;
-        }
+//        if (gamepad.circle && !padLock && isOpen) {
+//            ToggleSweeper();
+//            padLock = true;
+//        }
 
         else if (!gamepad.cross && padLock) padLock = false;
         if (System.currentTimeMillis() - sweepStart > 200) Sweep.setPosition(Constants.sweepStart);
