@@ -216,16 +216,20 @@ public class LeftAuto extends LinearOpMode {
         }
     }
     public class AutoLowGripper{
-        public Servo low_gripper;
+        public Servo low_gripper_right;
+        public Servo low_gripper_left;
         public AutoLowGripper(HardwareMap hardwareMap) {
-            low_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPERLEFT);
-            low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+            low_gripper_right = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPERRIRGHT);
+            low_gripper_right.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+            low_gripper_left = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPERLEFT);
+            low_gripper_left.setPosition(Constants.LOGRIPPER_CLOSE_POS);
         }
 
         public class OpenLowGripper implements Action{
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
+                low_gripper_right.setPosition(Constants.LOW_GRIPPER_OPENED);
+                low_gripper_left.setPosition(Constants.LOW_GRIPPER_OPENED);
                 return false;
             }
         }
@@ -233,25 +237,26 @@ public class LeftAuto extends LinearOpMode {
         public class CloseLowGripper implements Action{
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
-                low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+                low_gripper_right.setPosition(Constants.LOW_GRIPPER_CLOSED);
+                low_gripper_left.setPosition(Constants.LOW_GRIPPER_CLOSED);
                 return false;
             }
         }
 
-        public class OpenABit implements Action{
+        /*public class OpenABit implements Action{
             @Override
             public boolean run(@NonNull TelemetryPacket packet) {
                 low_gripper.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
                 return false;
             }
-        }
+        }*/
 
         public Action openGripper() {
             return new AutoLowGripper.OpenLowGripper();
         }
-        public Action openABit() {
+        /*public Action openABit() {
             return new AutoLowGripper.OpenABit();
-        }
+        }*/
 
         public Action closeGripper() {
             return new AutoLowGripper.CloseLowGripper();
@@ -451,7 +456,7 @@ public class LeftAuto extends LinearOpMode {
                 new SleepAction(0.3),
                 gripperSpinner.mid(),
                 new SleepAction(0.3),
-                lowGripper.openABit(),
+                //lowGripper.openABit(),
                 new SleepAction(0.3),
                 lowGripper.closeGripper(),
                 new SleepAction(0.3),
@@ -488,7 +493,7 @@ public class LeftAuto extends LinearOpMode {
                 new SleepAction(0.3),
                 gripperSpinner.mid(),
                 new SleepAction(0.3),
-                lowGripper.openABit(),
+                //lowGripper.openABit(),
                 new SleepAction(0.3),
                 lowGripper.closeGripper(),
                 new SleepAction(0.3),

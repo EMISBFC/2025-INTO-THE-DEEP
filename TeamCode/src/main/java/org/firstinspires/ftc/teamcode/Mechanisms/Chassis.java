@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Mechanisms;
 import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
@@ -40,20 +39,20 @@ public class Chassis {
     }
 
 
-    public void fieldCentricDrive(double x, double y, double rx, double acc){
-        if(acc>0.5) {
+    public void fieldCentricDrive(double x, double y, double rx, boolean bumper){
+        if(bumper) {
+            mecanum.driveFieldCentric(x * 0.3, y * 0.3, rx * 0.3, getHeading());
+        }
+        else{
             mecanum.driveFieldCentric(x * 1, y * 1, rx * 1, getHeading());
         }
-        else{
-            mecanum.driveFieldCentric(x * 0.75, y * 0.75, rx * 0.75, getHeading());
-        }
     }
-    public void robotCentricDrive(double x, double y, double rx, double acc){
-        if(acc>0.1){
-            mecanum.driveRobotCentric(x*1, y*1, rx*1);
+    public void robotCentricDrive(double x, double y, double rx, boolean bumper){
+        if(bumper){
+            mecanum.driveRobotCentric(x*0.8, y*0.8, rx*0.8);
         }
         else{
-            mecanum.driveRobotCentric(x*0.8, y*0.8, rx*0.8);
+            mecanum.driveRobotCentric(x*1, y*1, rx*1);
         }
     }
 }
