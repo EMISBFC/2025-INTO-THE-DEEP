@@ -109,14 +109,12 @@ public class Arm {
                 break;
 
             case LOW_OPEN:
-                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.LOW_CLOSE;
                     transitionStartTime = System.currentTimeMillis();
                 }
                 break;
             case LOW_CLOSE:
-                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 70) {
                     transitionState = TransitionState.LOW_GRIPPER_UP;
                     transitionStartTime = System.currentTimeMillis();
@@ -143,7 +141,6 @@ public class Arm {
                 break;
 
             case OPEN_LOW_GRIPPER:
-                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_OPEN_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
@@ -169,7 +166,6 @@ public class Arm {
                 }
                 break;
             case LOW_FINAL_CLOSE:
-                lowGripper.low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
                     transitionState = TransitionState.IDLE;
                     transitionStartTime = System.currentTimeMillis();

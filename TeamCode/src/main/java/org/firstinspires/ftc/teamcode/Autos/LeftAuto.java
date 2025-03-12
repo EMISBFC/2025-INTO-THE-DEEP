@@ -218,7 +218,7 @@ public class LeftAuto extends LinearOpMode {
     public class AutoLowGripper{
         public Servo low_gripper;
         public AutoLowGripper(HardwareMap hardwareMap) {
-            low_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPER);
+            low_gripper = hardwareMap.servo.get(ConstantNamesHardwaremap.LOWGRIPPERLEFT);
             low_gripper.setPosition(Constants.LOGRIPPER_CLOSE_POS);
         }
 

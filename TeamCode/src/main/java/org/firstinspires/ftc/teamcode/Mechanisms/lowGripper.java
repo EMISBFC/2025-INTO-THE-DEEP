@@ -63,7 +63,6 @@ public class lowGripper {
         }
         currentState = newState;
     }
-
     public void setPosition(GripperState state) {
         this.currentState = state;
         lowGripperR.setPosition(state.position);
