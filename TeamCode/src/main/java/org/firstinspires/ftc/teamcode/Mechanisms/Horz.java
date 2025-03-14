@@ -23,37 +23,30 @@ public class Horz{
         horz = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.HORZ);
         horz.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         horz.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        horz.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         horz.setDirection(DcMotorSimple.Direction.REVERSE);
         limit_switch = hardwareMap.get(TouchSensor.class, ConstantNamesHardwaremap.LIMITSWITCH);
     }
 
     public void handleHorz(Gamepad gamepad) {
-        if (!limit_switch.isPressed()) {
-            zero_position = horz.getCurrentPosition(); // Set the zero position when switch is pressed
-        }
 
+        int currentPos = horz.getCurrentPosition();
         double leftTrigger = gamepad.left_trigger;
         double rightTrigger = gamepad.right_trigger;
 
+        if (!limit_switch.isPressed()) {
+            zero_position = currentPos; // Set the zero position when switch is pressed
+            clicked = true;
+        }
+        else clicked = false;
+
         double power = rightTrigger - leftTrigger;
-        double motorPower = Range.clip(power, -MAX_SPEED, MAX_SPEED);
 
-        int currentPos = horz.getCurrentPosition();
-
-        clicked = limit_switch.isPressed();
-
-
-        if (motorPower > 0 && limit_switch.isPressed()) { //  && currentPos >= zero_position
-            horz.setPower(motorPower );
-        }else if (motorPower > 0 && currentPos < zero_position+Constants.MAX_HORZ_POS + 400) {
-            horz.setPower(0.1);
+        if (clicked) {
+            horz.setPower(Range.clip(power, -1, 0));
         }
-        else if (motorPower < 0 && currentPos > zero_position+Constants.MAX_HORZ_POS) {
-            horz.setPower(motorPower);
-        } else {
-            horz.setPower(0);
-        }
-
+        else if (currentPos <= zero_position+Constants.MAX_HORZ_POS) horz.setPower(Range.clip(power, 0, 1));
+        else horz.setPower(power);
     }
 }
