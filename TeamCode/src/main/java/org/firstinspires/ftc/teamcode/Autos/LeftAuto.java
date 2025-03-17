@@ -361,7 +361,7 @@ public class LeftAuto extends LinearOpMode {
                     break;
                 }
             }
-        });
+        }); 
 
         MecanumDrive ignitionSystem = new MecanumDrive(hardwareMap, BlueSampleCoordinates.getStart());
 
