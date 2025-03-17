@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.Constants.Constants;
 import java.util.List;
 
 public class lowGripper {
-    public static Servo lowGripperR;
-    public static Servo lowGripperL;
+    public Servo lowGripperR;
+    private Servo lowGripperL;
     private boolean gripperLock = false;
 
     public enum GripperState {
@@ -63,7 +63,6 @@ public class lowGripper {
         }
         currentState = newState;
     }
-
     public void setPosition(GripperState state) {
         this.currentState = state;
         lowGripperR.setPosition(state.position);

@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.hardware.RevIMU;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -19,6 +20,8 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Horz;
 import org.firstinspires.ftc.teamcode.Mechanisms.Sweeper;
 import org.firstinspires.ftc.teamcode.Mechanisms.lowGripper;
 
+import java.util.List;
+
 
 @Config
 @TeleOp(name="Teleop RIGHT!!")
@@ -32,9 +35,16 @@ public class TeleOpRight extends OpMode {
     private Sweeper sweeper;
     private Arm arm;
     private Elevator elevator;
+    private List<LynxModule> allHubs;
 
     @Override
     public void init() {
+        allHubs = hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+        for(LynxModule hub : allHubs){
+            hub.clearBulkCache(); }
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         chassis = new Chassis(hardwareMap);
         low_gripper = new lowGripper(hardwareMap);
@@ -43,7 +53,7 @@ public class TeleOpRight extends OpMode {
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         sweeper = new Sweeper(hardwareMap);
-        Constants.ELEVATOR_BOTTOM_POSITION = 90;
+//        Constants.ELEVATOR_BOTTOM_POSITION = 90;
         elevator = new Elevator(hardwareMap);
         elevator.moveToBottom();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -52,6 +62,8 @@ public class TeleOpRight extends OpMode {
 
     @Override
     public void loop() {
+        for(LynxModule hub : allHubs){
+            hub.clearBulkCache(); }
         double y = (gamepad1.left_stick_y);
         double x = (-gamepad1.left_stick_x);
         double rx = (-gamepad1.right_stick_x);
@@ -76,6 +88,7 @@ public class TeleOpRight extends OpMode {
         telemetry.addData("Pressed", horz.clicked);
         telemetry.addData("Elevator Right", elevator.ElevatorRightMotorTele);
         telemetry.addData("Elevator Left", elevator.ElevatorLeftMotorTele);
+        telemetry.addData("intake servo pos", low_gripper.lowGripperR.getPosition());
         telemetry.update();
     }
 }
