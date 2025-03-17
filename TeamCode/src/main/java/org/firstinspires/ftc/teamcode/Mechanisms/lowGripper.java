@@ -1,23 +1,29 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Autos.LeftAuto;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
 import java.util.List;
 
 public class lowGripper {
-    public Servo lowGripperR;
-    private Servo lowGripperL;
+    public static Servo lowGripperR;
+    public static Servo lowGripperL;
     private boolean gripperLock = false;
 
     public enum GripperState {
         OPEN(Constants.LOW_GRIPPER_OPENED),
-        CLOSED(Constants.LOW_GRIPPER_CLOSED);
+        CLOSED(Constants.LOW_GRIPPER_CLOSED),
+        OPEN_A_BIT(Constants.LOGRIPPER_A_BIT_OPEN_POS);
 
         public final double position;
         GripperState(double position) {
@@ -25,7 +31,7 @@ public class lowGripper {
         }
     }
 
-    private GripperState currentState = GripperState.CLOSED;
+    private static GripperState currentState = GripperState.CLOSED;
 
     public lowGripper(HardwareMap hardwareMap) {
         lowGripperR = hardwareMap.get(Servo.class, ConstantNamesHardwaremap.LOWGRIPPERRIRGHT);
@@ -46,14 +52,14 @@ public class lowGripper {
     }
 
     public void lowGripperControl(Gamepad gamepad){
-        if (gamepad.x && !gripperLock) {
+        if (gamepad.cross && !gripperLock) {
             toggleGripper();
             gripperLock = true;
-        } else if (!gamepad.x) {
+        } else if (!gamepad.cross) {
             gripperLock = false;
         }
     }
-    public void setGripperState(GripperState newState) {
+    public static void setGripperState(GripperState newState) {
         if (newState == GripperState.OPEN) {
             lowGripperR.setPosition(Constants.LOW_GRIPPER_OPENED);
             lowGripperL.setPosition(Constants.LOW_GRIPPER_OPENED);
@@ -69,7 +75,40 @@ public class lowGripper {
         lowGripperL.setPosition(state.position);
     }
 
-    public GripperState getCurrentState() {
-        return currentState;
+    //Autos
+
+    public class OpenLowGripper implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            lowGripperR.setPosition(Constants.LOGRIPPER_OPEN_POS);
+            return false;
+        }
+    }
+
+    public class CloseLowGripper implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+            return false;
+        }
+    }
+
+    public class OpenABit implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            lowGripperR.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
+            return false;
+        }
+    }
+
+    public Action openGripper() {
+        return new OpenLowGripper();
+    }
+    public Action openABit() {
+        return new OpenABit();
+    }
+
+    public Action closeGripper() {
+        return new CloseLowGripper();
     }
 }

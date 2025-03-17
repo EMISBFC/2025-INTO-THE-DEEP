@@ -1,11 +1,16 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PwmControl;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.ServoImplEx;
 
+import org.firstinspires.ftc.teamcode.Autos.LeftAuto;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
@@ -38,5 +43,41 @@ public class HighGripper {
     public static void OpenGripper(){
         high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
         isOpen = true;
+    }
+
+    // Actions
+    public class OpenHighGripper implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            high_gripper.setPosition(Constants.HIGRIPPER_OPEN_POS);
+            isOpen = true;
+            return false;
+        }
+    }
+
+    public class CloseHighGripper implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            high_gripper.setPosition(Constants.HIGRIPPER_CLOSE_POS);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            isOpen = false;
+            return false;
+        }
+    }
+
+    public Action openGripper() {
+        return new OpenHighGripper();
+    }
+
+    public Action closeGripper() {
+        return new CloseHighGripper();
+    }
+
+    public boolean isGripperOpen() {
+        return isOpen;
     }
 }

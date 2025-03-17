@@ -1,14 +1,20 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_BOTTOM_POSITION;
+import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
 import static org.firstinspires.ftc.teamcode.Constants.Constants.ELEVATOR_TOP_POSITION;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.Autos.LeftAuto;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
@@ -16,11 +22,14 @@ public class Elevator {
 
     // Target positions in ticks
     private final PIDController controller;
-    private final DcMotor leftElevatorMotor, rightElevatorMotor;
-    private int targetLeft, targetRight;
+    private final DcMotor leftElevatorMotor;
+    private final DcMotor rightElevatorMotor;
+    private static int targetLeft;
+    private static int targetRight;
     public int ElevatorLeftMotorTele, ElevatorRightMotorTele;
     public double powerLeft, powerRight;
     public static boolean block = false;
+    public static final int ELEVATOR_TOLERANCE = 20;
 
     public Elevator(HardwareMap hardwareMap) {
         // Initialize the motors
@@ -64,10 +73,9 @@ public class Elevator {
         updateElevator();
     }
 
-    public int moveToBottom() {
+    public void moveToBottom() {
         targetRight = ELEVATOR_BOTTOM_POSITION;
         targetLeft = ELEVATOR_BOTTOM_POSITION;
-        return ELEVATOR_BOTTOM_POSITION;
     }
 
     public void moveToMiddle() {
@@ -75,10 +83,9 @@ public class Elevator {
         targetLeft = Constants.ELEVATOR_MIDDLE_POSITION + 80;
     }
 
-    public int moveToTop() {
+    public void moveToTop() {
         targetRight = ELEVATOR_TOP_POSITION;
         targetLeft = ELEVATOR_TOP_POSITION + 175;
-        return ELEVATOR_TOP_POSITION;
     }
 
     public void updateElevator() {
@@ -98,5 +105,36 @@ public class Elevator {
         ElevatorRightMotorTele = rightElevatorMotor.getCurrentPosition();
         leftElevatorMotor.setPower(powerLeft);
         rightElevatorMotor.setPower(powerRight);
+    }
+
+    // Actions
+    public class ToTop implements Action{
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            targetRight = ELEVATOR_TOP_POSITION;
+            targetLeft = ELEVATOR_TOP_POSITION + 175;
+            return Math.abs(leftElevatorMotor.getCurrentPosition() - targetLeft) < ELEVATOR_TOLERANCE &&
+                    Math.abs(rightElevatorMotor.getCurrentPosition() - targetRight) < ELEVATOR_TOLERANCE;
+        }
+    }
+
+    public  class ToBottom implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            targetRight = ELEVATOR_BOTTOM_POSITION_LEFT;
+            targetLeft = ELEVATOR_BOTTOM_POSITION_LEFT;
+            return Math.abs(leftElevatorMotor.getCurrentPosition() - targetLeft) < ELEVATOR_TOLERANCE &&
+                    Math.abs(rightElevatorMotor.getCurrentPosition() - targetRight) < ELEVATOR_TOLERANCE;
+        }
+    }
+
+    public void maintainPosition() {
+        updateElevator();
+    }
+    public Action toBottom() {
+        return new ToBottom();
+    }
+    public Action toTop() {
+        return new ToTop();
     }
 }

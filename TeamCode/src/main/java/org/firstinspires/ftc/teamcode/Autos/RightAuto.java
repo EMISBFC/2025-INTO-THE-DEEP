@@ -303,11 +303,11 @@ public class RightAuto extends LinearOpMode {
                 .setTangent(BlueSpecimenCoordinates.getStart().heading)
                 .strafeToConstantHeading(BlueSpecimenCoordinates.getPark().position).build();
 
+        Chassis chassis = new Chassis(hardwareMap);
+        chassis.imu.resetYaw();
         waitForStart();
 
 
-        Chassis chassis = new Chassis(hardwareMap);
-        chassis.imu.resetYaw();
 
         highGripper.closeGripper();
 

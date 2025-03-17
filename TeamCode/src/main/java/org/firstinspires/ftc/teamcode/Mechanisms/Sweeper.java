@@ -18,7 +18,7 @@ public class Sweeper {
     }
 
     public void handleSweeper(Gamepad gamepad){
-        if (gamepad.triangle) {
+        if (gamepad.left_bumper) {
             Sweep();
         }
 //        if (gamepad.circle && !padLock && isOpen) {

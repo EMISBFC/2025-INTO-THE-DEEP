@@ -3,6 +3,10 @@ package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import static org.firstinspires.ftc.teamcode.Mechanisms.Elevator.block;
 
+import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -10,6 +14,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Autos.LeftAuto;
 import org.firstinspires.ftc.teamcode.Constants.ConstantNamesHardwaremap;
 import org.firstinspires.ftc.teamcode.Constants.Constants;
 
@@ -19,6 +24,9 @@ public class Arm {
     public double power;
     private final PIDController controller;
     private final DcMotor arm;
+
+    public final int TRANSITION_POSITION = Constants.ARM_TRANSITION_POSITION;
+    public final int PUT_POSITION = Constants.ARM_PUT_POSITION;
 
     public Arm(HardwareMap hardwareMap) {
         arm = hardwareMap.get(DcMotor.class, ConstantNamesHardwaremap.ARM);
@@ -94,7 +102,7 @@ public class Arm {
                 break;
             case OPEN_HIGH_GRIPPER:
                 HighGripper.OpenGripper();
-                if (System.currentTimeMillis() - transitionStartTime > 0) {
+                if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_TRANSITION;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -102,16 +110,17 @@ public class Arm {
 
             case ARM_TO_TRANSITION:
                 moveToTransition();
-                if (System.currentTimeMillis() - transitionStartTime > 0) {
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
                     transitionState = TransitionState.LOW_OPEN;
                     transitionStartTime = System.currentTimeMillis();
                 }
                 break;
 
             case LOW_OPEN:
-                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
-                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 100) {
+                //lowGripper.setGripperState(lowGripper.GripperState.OPEN_A_BIT);
+                lowGripper.lowGripperL.setPosition(0.75);
+                //lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS_LEFT);
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
                     transitionState = TransitionState.LOW_CLOSE;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -119,7 +128,7 @@ public class Arm {
             case LOW_CLOSE:
                 lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-                if (System.currentTimeMillis() - transitionStartTime > 70) {
+                if (System.currentTimeMillis() - transitionStartTime > 300) {
                     transitionState = TransitionState.LOW_GRIPPER_UP;
                     transitionStartTime = System.currentTimeMillis();
                 }
@@ -145,8 +154,8 @@ public class Arm {
                 break;
 
             case OPEN_LOW_GRIPPER:
-                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_OPEN_POS);
-                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_OPEN_POS);
+                lowGripper.lowGripperR.setPosition(0.75);
+                lowGripper.lowGripperL.setPosition(0.75);
                 if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
@@ -172,8 +181,8 @@ public class Arm {
                 }
                 break;
             case LOW_FINAL_CLOSE:
-                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+//                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+//                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
                     transitionState = TransitionState.IDLE;
                     transitionStartTime = System.currentTimeMillis();
@@ -222,4 +231,38 @@ public class Arm {
 
         arm.setPower(power);
     }
+
+    // Actions
+    public void maintainPosition() {
+        updateArm();
+    }
+
+    public void setTargetPosition(int position) {
+        targetArm = position;
+    }
+
+    public class ToTransition implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            targetArm = TRANSITION_POSITION;
+            updateArm();
+            return Math.abs(arm.getCurrentPosition() - targetArm) < Constants.ARMTOLERANCE;
+        }
+    }
+
+
+    public class ToPut implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            targetArm = PUT_POSITION;
+            updateArm();
+            return Math.abs(arm.getCurrentPosition() - targetArm) < Constants.ARMTOLERANCE;
+        }
+    }
+
+    public Action toTransition() {
+        return new ToTransition();
+    }
+
+    public Action toPut() {return new ToPut();}
 }

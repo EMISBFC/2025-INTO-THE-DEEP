@@ -42,7 +42,6 @@ public class TeleOpLeft extends OpMode {
 
         high_gripper = new HighGripper(hardwareMap);
         gripperSpinner = new GripperSpinner(hardwareMap);
-
         LRot.setDirection(Servo.Direction.REVERSE);
         LRot.setPosition(Constants.InRotPosMid);
         RRot.setDirection(Servo.Direction.FORWARD);
@@ -50,8 +49,9 @@ public class TeleOpLeft extends OpMode {
         horz = new Horz(hardwareMap); // rename horse variable plz and thank you -mariya
         arm = new Arm(hardwareMap);
         arm.moveToTransition();
-        Constants.ELEVATOR_BOTTOM_POSITION = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
+        //  Constants.ELEVATOR_BOTTOM_POSITION = Constants.ELEVATOR_BOTTOM_POSITION_LEFT;
         elevator = new Elevator(hardwareMap);
+        elevator.moveToBottom();
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
@@ -62,11 +62,11 @@ public class TeleOpLeft extends OpMode {
         double rx = (-gamepad1.right_stick_x);
         boolean bumper = gamepad1.right_bumper;
 
-        elevator.moveToBottom();
+
 
         chassis.fieldCentricDrive(x, y, rx, bumper);
         low_gripper.lowGripperControl(gamepad1);
-        gripperSpinner.handleInputLeft(gamepad1);
+        gripperSpinner.handleInput(gamepad1);
 
         high_gripper.handleServo(gamepad2);
         horz.handleHorz(gamepad2);
