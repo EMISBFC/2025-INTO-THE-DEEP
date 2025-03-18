@@ -63,9 +63,12 @@ public class lowGripper {
         if (newState == GripperState.OPEN) {
             lowGripperR.setPosition(Constants.LOW_GRIPPER_OPENED);
             lowGripperL.setPosition(Constants.LOW_GRIPPER_OPENED);
-        } else {
+        } else if (newState == GripperState.CLOSED){
             lowGripperR.setPosition(Constants.LOW_GRIPPER_CLOSED);
             lowGripperL.setPosition(Constants.LOW_GRIPPER_CLOSED);
+        } else {
+            lowGripperR.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
+            lowGripperL.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
         }
         currentState = newState;
     }

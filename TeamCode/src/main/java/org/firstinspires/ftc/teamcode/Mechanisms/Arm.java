@@ -117,8 +117,8 @@ public class Arm {
                 break;
 
             case LOW_OPEN:
-                //lowGripper.setGripperState(lowGripper.GripperState.OPEN_A_BIT);
-                lowGripper.lowGripperL.setPosition(0.75);
+                lowGripper.setGripperState(lowGripper.GripperState.OPEN_A_BIT);
+                //lowGripper.lowGripperL.setPosition(0.75);
                 //lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS_LEFT);
                 if (System.currentTimeMillis() - transitionStartTime > 300) {
                     transitionState = TransitionState.LOW_CLOSE;
@@ -126,8 +126,9 @@ public class Arm {
                 }
                 break;
             case LOW_CLOSE:
-                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
-                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+                //lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+                //lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+                lowGripper.setGripperState(lowGripper.GripperState.CLOSED);
                 if (System.currentTimeMillis() - transitionStartTime > 300) {
                     transitionState = TransitionState.LOW_GRIPPER_UP;
                     transitionStartTime = System.currentTimeMillis();
@@ -154,8 +155,9 @@ public class Arm {
                 break;
 
             case OPEN_LOW_GRIPPER:
-                lowGripper.lowGripperR.setPosition(0.75);
-                lowGripper.lowGripperL.setPosition(0.75);
+                lowGripper.setGripperState(lowGripper.GripperState.OPEN);
+                //lowGripper.lowGripperR.setPosition(0.75);
+                //lowGripper.lowGripperL.setPosition(0.75);
                 if (System.currentTimeMillis() - transitionStartTime > 100) {
                     transitionState = TransitionState.ARM_TO_PUT;
                     transitionStartTime = System.currentTimeMillis();
@@ -181,6 +183,7 @@ public class Arm {
                 }
                 break;
             case LOW_FINAL_CLOSE:
+                lowGripper.setGripperState(lowGripper.GripperState.OPEN);
 //                lowGripper.lowGripperR.setPosition(Constants.LOGRIPPER_CLOSE_POS);
 //                lowGripper.lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
                 if (System.currentTimeMillis() - transitionStartTime > 0) {
