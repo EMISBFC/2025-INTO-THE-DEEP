@@ -10,7 +10,7 @@ public class Constants {
     public static final double TICKS_IN_DEG = (double) 360/288*72/45; // =
     public static final double TICKS_IN_DEG_ELEVATOR = 19.0675;
     public static final int MAX_HORZ_POS = -750;
-    public static int ELEVATOR_BOTTOM_POSITION = 30, ELEVATOR_BOTTOM_POSITION_LEFT = 30, ELEVATOR_MIDDLE_POSITION = 1700, ELEVATOR_TOP_POSITION = 2550;
+    public static int ELEVATOR_BOTTOM_POSITION = 80, ELEVATOR_BOTTOM_POSITION_LEFT = 80, ELEVATOR_MIDDLE_POSITION = 1700, ELEVATOR_TOP_POSITION = 2550; //buttom = 30
     public static final double LOGRIPPER_CLOSE_POS = 0.4, LOGRIPPER_A_BIT_OPEN_POS= 0.313, LOGRIPPER_OPEN_POS = 0.75;
     public static final double HIGRIPPER_CLOSE_POS = 0.89, HIGRIPPER_OPEN_POS = 0.35;
     public static final double sweepStart = 0.95, sweepEnd = 0.5;

@@ -29,10 +29,9 @@ import org.firstinspires.ftc.teamcode.Mechanisms.GripperSpinner;
 import org.firstinspires.ftc.teamcode.Mechanisms.HighGripper;
 import org.firstinspires.ftc.teamcode.NotNeededCantDelete.MecanumDrive;
 
-@Autonomous(name = "Specimen", group = "Autonomous")
-public class RightAuto extends LinearOpMode {
+@Autonomous(name = "Specimen5v", group = "Autonomous")
+public class RightAuto5v extends LinearOpMode {
     public class AutoArm {
-
         public static final int TRANSITION_POSITION = (int) (40 * Constants.TICKS_IN_DEG);
         public static final int GRAB_POSITION = (int) (169 * Constants.TICKS_IN_DEG); //165
 
@@ -89,11 +88,11 @@ public class RightAuto extends LinearOpMode {
         }
 
         public Action toTransition() {
-            return new ToTransition();
+            return new RightAuto5v.AutoArm.ToTransition();
         }
 
         public Action toGrab() {
-            return new ToGrab();
+            return new RightAuto5v.AutoArm.ToGrab();
         }
     }
     public class AutoElevator {
@@ -173,10 +172,10 @@ public class RightAuto extends LinearOpMode {
         }
 
         public Action toTop() {
-            return new ToTop();
+            return new RightAuto5v.AutoElevator.ToTop();
         }
         public Action toBottom() {
-            return new ToBottom();
+            return new RightAuto5v.AutoElevator.ToBottom();
         }
     }
     public class AutoHighGripper {
@@ -212,148 +211,19 @@ public class RightAuto extends LinearOpMode {
         }
 
         public Action openGripper() {
-            return new OpenHighGripper();
+            return new RightAuto5v.AutoHighGripper.OpenHighGripper();
         }
 
         public Action closeGripper() {
-            return new CloseHighGripper();
+            return new RightAuto5v.AutoHighGripper.CloseHighGripper();
         }
 
         public boolean isGripperOpen() {
             return isOpen;
         }
     }
-
     @Override
     public void runOpMode() throws InterruptedException {
-        MecanumDrive drive = new MecanumDrive(hardwareMap,  BlueSpecimenCoordinates.getStart());
-        AutoArm arm = new AutoArm(hardwareMap);
-        AutoElevator elevator = new AutoElevator(hardwareMap);
-        AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
 
-        Thread armThread = new Thread(() -> {
-            while (!isStopRequested()) {
-                arm.maintainPosition();
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        });
-
-        Thread elevatorThread = new Thread(() -> {
-            while (!isStopRequested()) {
-                elevator.maintainPosition();
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                    break;
-                }
-            }
-        });
-
-        MecanumDrive ignitionSystem = new MecanumDrive(hardwareMap, BlueSpecimenCoordinates.getStart());
-
-        Action scorePreLoad = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getStart())
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore1().position).build();
-
-        Action moveSpecimens = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore1())
-                .splineToConstantHeading(new Vector2d(4, 39), Math.toRadians(-90.00))
-                .setTangent(BlueSpecimenCoordinates.getMidWayMoveSpecimensTangent())
-                .splineToConstantHeading(BlueSpecimenCoordinates.getBackUp().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimensStart0().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart1().position, BlueSpecimenCoordinates.getStart().heading)
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd1().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart1().position, BlueSpecimenCoordinates.getStart().heading)
-
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenStart2().position, BlueSpecimenCoordinates.getStart().heading)
-                .splineToConstantHeading(BlueSpecimenCoordinates.getMoveSpecimenEnd2().position, BlueSpecimenCoordinates.getStart().heading).build();
-
-        Action collectSecond = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getMoveSpecimenEnd3())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .splineToConstantHeading(BlueSpecimenCoordinates.getIntakeOne().position, BlueSpecimenCoordinates.getStart().heading).build();
-
-        Action scoreSecond = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore2().position).build();
-
-        Action collectThird = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore2())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getIntake().position).build();
-
-        Action scoreThird = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore3().position).build();
-
-        Action collectFourth = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore3())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getIntake().position).build();
-
-        Action scoreFourth = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getIntake())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getScore4().position).build();
-
-        Action park = ignitionSystem.actionBuilder(BlueSpecimenCoordinates.getScore4())
-                .setTangent(BlueSpecimenCoordinates.getStart().heading)
-                .strafeToConstantHeading(BlueSpecimenCoordinates.getPark().position).build();
-
-        Chassis chassis = new Chassis(hardwareMap);
-        chassis.imu.resetYaw();
-        waitForStart();
-
-
-
-        highGripper.closeGripper();
-
-        waitForStart();
-
-        elevator.toBottom();
-        armThread.start();
-        elevatorThread.start();
-
-        if (opModeIsActive()) {
-            Actions.runBlocking(new SequentialAction(
-                    new ParallelAction(
-                            arm.toTransition(),
-                            scorePreLoad
-                    ),
-                    arm.toGrab(),
-                    highGripper.openGripper(),
-                    moveSpecimens,
-                    collectSecond,
-                    highGripper.closeGripper(),
-                    new ParallelAction(
-                            arm.toTransition(),
-                            scoreSecond
-                    ),
-                    arm.toGrab(),
-                    highGripper.openGripper(),
-                    collectThird,
-                    highGripper.closeGripper(),
-                    new ParallelAction(
-                            arm.toTransition(),
-                            scoreThird
-                    ),
-                    arm.toGrab(),
-                    highGripper.openGripper(),
-                    collectFourth,
-                    highGripper.closeGripper(),
-                    new ParallelAction(
-                            arm.toTransition(),
-                            scoreFourth
-                    ),
-                    arm.toGrab(),
-                    highGripper.openGripper(),
-                    park
-            ));
-        }
-        armThread.interrupt();
-        armThread.join();
     }
 }

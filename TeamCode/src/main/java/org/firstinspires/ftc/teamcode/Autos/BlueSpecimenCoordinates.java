@@ -5,11 +5,11 @@ import com.acmerobotics.roadrunner.Pose2d;
 public class BlueSpecimenCoordinates {
     private static final double startX = -8;
     private static final double startY = 63;
-    private static final double score1X = 3;
-    private static final double score2X = 0;
-    private static final double score3X = -4;
-    private static final double score4X = -6;
-    private static final double scoreY = 28;
+    private static final double score1X = 2.3; //3
+    private static final double score2X = 0; //-1.6
+    private static final double score3X = -2.2; //-4.2
+    private static final double score4X = -5; //-6.2
+    private static final double scoreY = 27; //28
     private static final double backUpY = 40;
     private static final double midWayMoveSpecimensY = 65;
     private static final double moveSpecimensStart0X = -38;
