@@ -6,6 +6,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -88,11 +89,11 @@ public class RightAuto5v extends LinearOpMode {
         }
 
         public Action toTransition() {
-            return new RightAuto5v.AutoArm.ToTransition();
+            return new ToTransition();
         }
 
         public Action toGrab() {
-            return new RightAuto5v.AutoArm.ToGrab();
+            return new ToGrab();
         }
     }
     public class AutoElevator {
@@ -172,10 +173,10 @@ public class RightAuto5v extends LinearOpMode {
         }
 
         public Action toTop() {
-            return new RightAuto5v.AutoElevator.ToTop();
+            return new ToTop();
         }
         public Action toBottom() {
-            return new RightAuto5v.AutoElevator.ToBottom();
+            return new ToBottom();
         }
     }
     public class AutoHighGripper {
@@ -211,19 +212,233 @@ public class RightAuto5v extends LinearOpMode {
         }
 
         public Action openGripper() {
-            return new RightAuto5v.AutoHighGripper.OpenHighGripper();
+            return new OpenHighGripper();
         }
 
         public Action closeGripper() {
-            return new RightAuto5v.AutoHighGripper.CloseHighGripper();
+            return new CloseHighGripper();
         }
 
         public boolean isGripperOpen() {
             return isOpen;
         }
     }
+
+    public class AutoSweeper {
+        public Servo Sweep;
+
+        public AutoSweeper(HardwareMap hardwareMap) {
+            Sweep = hardwareMap.get(Servo.class, ConstantNamesHardwaremap.SWEEPER);
+        }
+
+        public class sweeperPush implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Sweep.setPosition(0.55);
+                return false;
+            }
+        }
+
+        public class sweeperStart implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Sweep.setPosition(0.7);
+                return false;
+            }
+        }
+
+        public class sweeperEnd implements Action {
+            @Override
+            public boolean run(@NonNull TelemetryPacket packet) {
+                Sweep.setPosition(0.95);
+                return false;
+            }
+        }
+
+        public Action sweeperPush() {
+            return new sweeperPush();
+        }
+        public Action sweeperStart() {
+            return new sweeperStart();
+        }
+        public Action sweeperEnd() {
+            return new sweeperEnd();
+        }
+    }
     @Override
     public void runOpMode() throws InterruptedException {
+        MecanumDrive drive = new MecanumDrive(hardwareMap,  BlueSpecimenCoordinates.getStart());
+        AutoArm arm = new AutoArm(hardwareMap);
+        AutoElevator elevator = new AutoElevator(hardwareMap);
+        AutoHighGripper highGripper = new AutoHighGripper(hardwareMap);
+        AutoSweeper sweeper = new AutoSweeper(hardwareMap);
+        Thread armThread = new Thread(() -> {
+            while (!isStopRequested()) {
+                arm.maintainPosition();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
 
+        Thread elevatorThread = new Thread(() -> {
+            while (!isStopRequested()) {
+                elevator.maintainPosition();
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
+        });
+
+        MecanumDrive ignitionSystem = new MecanumDrive(hardwareMap, BlueSpecimenCoordinates.getStart());
+
+        Action pushFirstStart = ignitionSystem.actionBuilder(Specimen5vCordinates.getStart())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush1Start().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush1Start().position, Specimen5vCordinates.getMoveSpecimensPush1Start().heading).build();
+
+        Action pushFirstEnd = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush1Start())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush1End().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush1End().position, Specimen5vCordinates.getMoveSpecimensPush1End().heading).build();
+
+        Action pushSecondStart = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush1End())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush2Start().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush2Start().position, Specimen5vCordinates.getMoveSpecimensPush2Start().heading).build();
+
+        Action pushSecondEnd = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush2Start())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush2End().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush2End().position, Specimen5vCordinates.getMoveSpecimensPush2End().heading).build();
+
+        Action pushThirdStart = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush2End())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush3Start().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush3Start().position, Specimen5vCordinates.getMoveSpecimensPush3Start().heading).build();
+
+        Action pushThirdEnd = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush3Start())
+                .setTangent(Specimen5vCordinates.getMoveSpecimensPush3End().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getMoveSpecimensPush3End().position, Specimen5vCordinates.getMoveSpecimensPush3End().heading).build();
+
+        Action intake1 = ignitionSystem.actionBuilder(Specimen5vCordinates.getMoveSpecimensPush3End())
+                .setTangent(Specimen5vCordinates.getIntake().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getIntake().position, Specimen5vCordinates.getIntake().heading).build();
+
+        Action score1 = ignitionSystem.actionBuilder(Specimen5vCordinates.getIntake())
+                .setTangent(Specimen5vCordinates.getScore1().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getScore1().position, Specimen5vCordinates.getScore1().heading).build();
+
+        Action intake2 = ignitionSystem.actionBuilder(Specimen5vCordinates.getScore1())
+                .setTangent(Specimen5vCordinates.getIntake().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getIntake().position, Specimen5vCordinates.getIntake().heading).build();
+
+        Action score2 = ignitionSystem.actionBuilder(Specimen5vCordinates.getIntake())
+                .setTangent(Specimen5vCordinates.getScore2().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getScore2().position, Specimen5vCordinates.getScore2().heading).build();
+
+        Action intake3 = ignitionSystem.actionBuilder(Specimen5vCordinates.getScore2())
+                .setTangent(Specimen5vCordinates.getIntake().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getIntake().position, Specimen5vCordinates.getIntake().heading).build();
+
+        Action score3 = ignitionSystem.actionBuilder(Specimen5vCordinates.getIntake())
+                .setTangent(Specimen5vCordinates.getScore3().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getScore3().position, Specimen5vCordinates.getScore3().heading).build();
+
+        Action intake4 = ignitionSystem.actionBuilder(Specimen5vCordinates.getScore3())
+                .setTangent(Specimen5vCordinates.getIntake().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getIntake().position, Specimen5vCordinates.getIntake().heading).build();
+
+        Action score4 = ignitionSystem.actionBuilder(Specimen5vCordinates.getIntake())
+                .setTangent(Specimen5vCordinates.getScore4().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getScore4().position, Specimen5vCordinates.getScore4().heading).build();
+
+        Action intake5 = ignitionSystem.actionBuilder(Specimen5vCordinates.getScore4())
+                .setTangent(Specimen5vCordinates.getIntake().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getIntake().position, Specimen5vCordinates.getIntake().heading).build();
+
+        Action score5 = ignitionSystem.actionBuilder(Specimen5vCordinates.getIntake())
+                .setTangent(Specimen5vCordinates.getScore5().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getScore5().position, Specimen5vCordinates.getScore5().heading).build();
+
+        Action park = ignitionSystem.actionBuilder(Specimen5vCordinates.getScore5())
+                .setTangent(Specimen5vCordinates.getPark().heading)
+                .splineToConstantHeading(Specimen5vCordinates.getPark().position, Specimen5vCordinates.getPark().heading).build();
+
+
+        Chassis chassis = new Chassis(hardwareMap);
+        chassis.imu.resetYaw();
+        highGripper.openGripper();
+        sweeper.sweeperStart();
+        waitForStart();
+
+        elevator.toBottom();
+        armThread.start();
+        elevatorThread.start();
+
+        if (opModeIsActive()) {
+            Actions.runBlocking(new SequentialAction(
+                    new ParallelAction(
+                            arm.toGrab(),
+                            pushFirstStart
+                    ),
+                    sweeper.sweeperPush(),
+                    pushFirstEnd,
+                    sweeper.sweeperStart(),
+
+                    pushSecondStart,
+                    sweeper.sweeperPush(),
+                    pushSecondEnd,
+                    sweeper.sweeperStart(),
+
+                    pushThirdStart,
+                    sweeper.sweeperPush(),
+                    pushThirdEnd,
+                    sweeper.sweeperEnd(),
+
+                    intake1,
+                    highGripper.closeGripper(),
+                    new ParallelAction(
+                            arm.toTransition(),
+                            score1
+                    ),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    intake2,
+                    highGripper.closeGripper(),
+                    new ParallelAction(
+                            arm.toTransition(),
+                            score2
+                    ),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    intake3,
+                    highGripper.closeGripper(),
+                    new ParallelAction(
+                            arm.toTransition(),
+                            score3
+                    ),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    intake4,
+                    highGripper.closeGripper(),
+                    new ParallelAction(
+                            arm.toTransition(),
+                            score4
+                    ),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    intake5,
+                    highGripper.closeGripper(),
+                    new ParallelAction(
+                            arm.toTransition(),
+                            score5
+                    ),
+                    arm.toGrab(),
+                    highGripper.openGripper(),
+                    park
+            ));
+        }
     }
 }

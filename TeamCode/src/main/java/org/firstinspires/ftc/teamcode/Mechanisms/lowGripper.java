@@ -83,7 +83,7 @@ public class lowGripper {
     public class OpenLowGripper implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            lowGripperR.setPosition(Constants.LOGRIPPER_OPEN_POS);
+            setGripperState(GripperState.OPEN);
             return false;
         }
     }
@@ -91,7 +91,7 @@ public class lowGripper {
     public class CloseLowGripper implements Action{
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            lowGripperL.setPosition(Constants.LOGRIPPER_CLOSE_POS);
+            setGripperState(GripperState.CLOSED);
             return false;
         }
     }
@@ -99,7 +99,7 @@ public class lowGripper {
     public class OpenABit implements Action{
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
-            lowGripperR.setPosition(Constants.LOGRIPPER_A_BIT_OPEN_POS);
+            setGripperState(GripperState.OPEN_A_BIT);
             return false;
         }
     }

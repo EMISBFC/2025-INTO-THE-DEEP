@@ -8,7 +8,7 @@ public class BlueSampleCoordinates {
     private static final double scoreX = 60;
     private static final double scoreY = 56.5;
     private static final double intake2X = 49;
-    private static final double intake2Y = 32;
+    private static final double intake2Y = 36;
     private static final double intake3X = 60;
     private static final double intake4X = 57;
     private static final double intake4Y = 34;
